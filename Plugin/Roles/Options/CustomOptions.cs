@@ -19,12 +19,16 @@ using Hazel;
 using Reactor.Networking.Rpc;
 using Steamworks;
 using JetBrains.Annotations;
+using Innersloth.Assets;
+using static TheSpaceRoles.Translation;
+using InnerNet;
+using UnityEngine.UIElements.UIR;
 
 namespace TheSpaceRoles
 {
-    public static class CustomRoleOptions
-    {
-    }
+    //public static class CustomRoleOptions
+    //{
+    //}
     [Serializable]
     /// <summary>
     /// めっちゃTORからもってきました
@@ -36,9 +40,9 @@ namespace TheSpaceRoles
         {
             var template = UnityEngine.Object.FindObjectsOfType<StringOption>().FirstOrDefault();
 
-            if(template == null) { return; }
-            if (__instance?.transform?.FindChild("TSRSettings") != null) { return; }
-            if (__instance?.transform?.FindChild("CustomRoleSettings") != null) { return; }
+            if (template == null) { return; }
+            if (GameObject.Find("TSRSettings") != null) { return; }
+            if (GameObject.Find("CustomRoleSettings") != null) { return; }
             var gameSettings = GameObject.Find("Game Settings");
             var gameSettingMenu = UnityEngine.Object.FindObjectsOfType<GameSettingMenu>().FirstOrDefault();
 
@@ -50,7 +54,7 @@ namespace TheSpaceRoles
             var customroleMenu = customroleSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
             customroleSettings.name = "CustomRoleSettings";
 
-            Logger.Info(customroleMenu?.ToString() ?? "null","CustomRoleSetting_GameGroup");
+            Logger.Info(customroleMenu?.ToString() ?? "null", "CustomRoleSetting_GameGroup");
 
             var gameTab = GameObject.Find("GameTab");
             var roleTab = GameObject.Find("RoleTab");
@@ -85,7 +89,7 @@ namespace TheSpaceRoles
             gameSettingMenu.GameSettingsHightlight.enabled = true;
 
             var tabs = new GameObject[] { gameTab, roleTab, tsrTab, customroleTab };
-            for (int i = 0;i<tabs.Length;i++)
+            for (int i = 0; i < tabs.Length; i++)
             {
                 var tab = tabs[i];
                 var button = tab.GetComponentInChildren<PassiveButton>();
@@ -113,32 +117,33 @@ namespace TheSpaceRoles
                     if (copyindex == 0)
                     {
 
-                        Logger.Info($"open : {copyindex},{((GameObject.Find("TSRSettings") == null )? "null" : "TSRSettings!")}");
+                        Logger.Info($"open : {copyindex},{((GameObject.Find("TSRSettings") == null) ? "null" : "TSRSettings!")}");
 
                         if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek)
                             gameSettingMenu.HideNSeekSettings.gameObject.SetActive(true);
                         else
                             gameSettingMenu.RegularGameSettings.SetActive(true);
                         gameSettingMenu.GameSettingsHightlight.enabled = true;
-                    }else if (copyindex == 1)
+                    }
+                    else if (copyindex == 1)
                     {
 
                         Logger.Info($"open : {copyindex}");
                         gameSettingMenu.RolesSettings.gameObject.SetActive(true);
                         gameSettingMenu.RolesSettingsHightlight.enabled = true;
                     }
-                    else if(copyindex == 2)
+                    else if (copyindex == 2)
                     {
                         Logger.Info($"open : {copyindex}");
-                        tsrSettings.gameObject.SetActive(true) ;
+                        tsrSettings.gameObject.SetActive(true);
                         tsrTabHighlight.enabled = true;
 
                     }
-                    else if(copyindex ==3)
+                    else if (copyindex == 3)
                     {
                         Logger.Info($"open : {copyindex}");
                         customroleSettings.gameObject.SetActive(true);
-                        customroleTabHighlight.enabled=true;
+                        customroleTabHighlight.enabled = true;
                     }
                 }));
             }
@@ -149,30 +154,31 @@ namespace TheSpaceRoles
 
             GameObject tsrSliderInner = tsrSettings.transform.FindChild("GameGroup").FindChild("SliderInner").gameObject;
             CustomOptionsHolder.CreateCustomOptions();
-            for(int i = 0; i < CustomOption.options.Count; i++)
+            for (int i = 0; i < CustomOption.options.Count; i++)
             {
                 var option = CustomOption.options[i];
                 if (option.optionBehaviour == null)
                 {
                     StringOption stringOption = UnityEngine.Object.Instantiate(template, tsrMenu.transform);
                     stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
-
                     stringOption.TitleText.text = option.GetName();
                     stringOption.Value = stringOption.oldValue = option.selection;
                     stringOption.ValueText.text = option.GetSelectionName();
                     option.optionBehaviour = stringOption;
                     stringOption.enabled = true;
-                    
+                    option.UpdateSelection(option.selection);
                     tsrOptions.Add(stringOption);
                 }
                 option.optionBehaviour.gameObject.SetActive(true);
+                Logger.Info(option.name);
+
             }
 
 
 
 
 
-            SetOptions(tsrMenu,tsrOptions,tsrSettings);
+            SetOptions(tsrMenu, tsrOptions, tsrSettings);
             AdaptTaskCount(__instance);
         }
         private static void AdaptTaskCount(GameOptionsMenu __instance)
@@ -195,32 +201,23 @@ namespace TheSpaceRoles
         }
         private static void SetOptions(GameOptionsMenu menus, List<OptionBehaviour> options, GameObject settings)
         {
-                menus.Children = options.ToArray();
-                settings.gameObject.SetActive(false);
-            for (int i = 0; i < options.Count; i++) 
+            menus.Children = options.ToArray();
+            settings.gameObject.SetActive(false);
+            for (int i = 0; i < options.Count; i++)
             {
                 var option = (StringOption)options[i];
-                option.transform.localPosition = new Vector3(0,2f-0.5f*i,0);
-                    
-                    }
+                option.transform.localPosition = new Vector3(0, 2f - 0.5f * i, 0);
+
+            }
 
         }
 
     }
-    [HarmonyPatch(typeof(GameSettingMenu),nameof(GameSettingMenu.Start))]
-    class GameSettingStart
-    {
-        public static void Postfix(GameSettingMenu __instance) 
-        {
-
-        }
-
-
-    }
-    [HarmonyPatch(typeof(StringOption), nameof(StringOption.OnEnable))]
+    [HarmonyPatch(typeof(StringOption))]
     public class StringOptionEnablePatch
     {
-        public static bool Prefix(StringOption __instance)
+        [HarmonyPatch(nameof(StringOption.OnEnable)), HarmonyPrefix]
+        public static bool OnEnable(StringOption __instance)
         {
             CustomOption option = CustomOption.options.FirstOrDefault(option => option.optionBehaviour == __instance);
             if (option == null) return true;
@@ -231,7 +228,6 @@ namespace TheSpaceRoles
             __instance.ValueText.text = option.GetSelectionName();
             option.optionBehaviour = __instance;
             __instance.enabled = true;
-            __instance.GetComponentInChildren<PassiveButton>().enabled = true;
             //__instance.Values = (Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<StringNames>)Enum.GetValues(typeof(StringNames));
             return false;
         }
@@ -242,8 +238,9 @@ namespace TheSpaceRoles
         public static bool Prefix(StringOption __instance)
         {
             CustomOption option = CustomOption.options.FirstOrDefault(option => option.optionBehaviour == __instance);
-            if (option == null) return false;
-            option.updateSelection(option.selection + 1);
+            Logger.Info(__instance.name);
+            if (option == null) return true;
+            option.UpdateSelection(option.selection + 1);
             return false;
         }
     }
@@ -254,8 +251,9 @@ namespace TheSpaceRoles
         public static bool Prefix(StringOption __instance)
         {
             CustomOption option = CustomOption.options.FirstOrDefault(option => option.optionBehaviour == __instance);
-            if (option == null) return false;
-            option.updateSelection(option.selection - 1);
+            Logger.Info(__instance.name);
+            if (option == null) return true;
+            option.UpdateSelection(option.selection - 1);
             return false;
         }
     }
@@ -263,9 +261,21 @@ namespace TheSpaceRoles
     {
         public static int preset = 0;
         public static List<CustomOption> options = [];
-        public string GetName() => Translation.GetString("tsroption."+name);
-        public string GetSelectionName() => Translation.GetString("tsroption.selection." + selections[selection]);
+        public string GetName() => GetString("tsroption." + name);
+        public string GetSelectionName() {
+            try
+            {
 
+                return selections[selection].ToString();
+            }catch (Exception e) 
+            {
+                Logger.Info(selection.ToString());
+                return "errrror";
+            }
+            
+        
+        }
+        public string parent;
         public string name;
         public string parentId;
         public int selection;
@@ -277,82 +287,227 @@ namespace TheSpaceRoles
         public Action onChange;
         public OptionBehaviour optionBehaviour;
 
-        public CustomOption(string name,
+        public CustomOption(string parent, string name,
             object[] selections, object dafaultValue, string parentId = null, Func<int, bool> func = null, Action onChange = null
             )
         {
             this.name = name;
             this.func = func;
             this.onChange = onChange;
-            this.selections = selections;
             int index = Array.IndexOf(selections, dafaultValue);
-            selection = index;
-            this.defaultSelection = index >= 0 ? index : 0;
+            this.defaultSelection = index >= 0 ? index < selections.Length ? index : selections.Length - 1 : 0;
+            this.selections = selections;
+            selection = defaultSelection;
             this.parentId = parentId;
-            
-            entry = TSR.Instance.Config.Bind<int>($"Preset{preset}", name, defaultSelection);
 
+            entry = TSR.Instance.Config.Bind<int>($"Preset{preset}", name, defaultSelection);
+            selection = entry.Value;
             options.Add(this);
 
         }
-        public static CustomOption Create(string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static string On() => GetString("tsroption.selection.on");
+        public static string Off() => GetString("tsroption.selection.off");
+        public static string Second(float sec) => GetString("tsroption.selection.second", [sec.ToString()]);
+        public static CustomOption Create(string parent, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(name, ["Off", "On"], DefaultValue ? "On" : "Off", parentId, func, onChange);
+            return new CustomOption(parent, name, [On(), Off()], DefaultValue ? On() : Off(), parentId, func, onChange);
         }
-        public static Func<int, bool> OnOff =  x => x == 0  ;
+        public static Func<int, bool> Onfunc = x => x == 0;
+        public static Func<int, bool> Offfunc = x => x != 0;
 
-        public static CustomOption Create(string name, string[] selections,string selection,string parentId =null, Func<int, bool> func = null, Action onChange = null)
+        public static CustomOption Create(string parent, string name, string[] selections, string selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption( name, selections, selection, parentId,func, onChange);
+            return new CustomOption(parent, name, selections, selection, parentId, func, onChange);
         }
-        public void updateSelection(int newSelection)
+        public void UpdateSelection(int newSelection)
+        {
+            if (AmongUsClient.Instance.AmHost)
+            {
+
+                var gameobject = optionBehaviour.gameObject;
+                var stringOption = this.optionBehaviour as StringOption;
+                selection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
+                this.entry.Value = selection;
+                stringOption.oldValue = stringOption.Value = selection;
+                stringOption.ValueText.text = GetSelectionName();
+                Logger.Info($"{name}:{selection}", "UpdateSelection");
+                ShareOptionSelections();
+            }
+            else
+            {
+                selection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
+                this.entry.Value = selection;
+
+                Logger.Info($"{name}:{selection}", "UpdateSelection");
+            }
+
+        }
+        public void Check()
         {
 
-            var stringOption = this.optionBehaviour as StringOption;
-            selection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
-            stringOption.oldValue = stringOption.Value = selection;
-            stringOption.ValueText.text = GetSelectionName();
-            Logger.Info($"{name}:{selection}");
-            ShareOptionSelections();
+            var op = optionBehaviour as StringOption;
+            if (func != null && parentId != null && op != null && op.gameObject != null)
+            {
+                if (func(options.First(x => x.name == parentId).selection))
+                {
+
+                    op.gameObject.active = true;
+
+
+                }
+                else
+                {
+
+                    op.gameObject.active = false;
+
+
+                }
+            }
+
+            try
+            {
+                var option = options.Select(x => (StringOption)x.optionBehaviour);
+                if (!option.Any(x => x.gameObject?.active == null) && option.Any(x => x.gameObject.active))
+                {
+
+                    var ops = options.Where(x => x.optionBehaviour.gameObject.active);
+                    op.transform.localPosition = new Vector3(0, 2f - 0.5f * ops.ToList().IndexOf(this), 0);
+                }
+                else
+                {
+
+                    op.transform.localPosition = new Vector3(0, 10000);
+                }
+
+            }
+            catch
+            {
+
+            }
+
         }
 
+
+        public static void AllCheck()
+        {
+
+            for (int i = 0; i < options.Count; i++)
+            {
+
+                options[i].Check();
+            }
+        }
         public static void ShareOptionSelections()
         {
             if (PlayerControl.AllPlayerControls.Count <= 1 || AmongUsClient.Instance?.AmHost == false && PlayerControl.LocalPlayer == null) return;
 
+            Reload();
+            Logger.Info("Share!");
             MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)Rpcs.ShareOptions, Hazel.SendOption.Reliable);
-            writer.WritePacked((uint)options.Count);
-            foreach (CustomOption option in options)
+            writer.WritePacked(Convert.ToUInt32(options.Count));
+            for(int i = 0; i < options.Count; ++i)
             {
-                writer.Write((uint)Convert.ToUInt32(option.selection));
+                writer.WritePacked(Convert.ToUInt32(options[i].selection));
             }
             writer.EndMessage();
-            Reload();
         }
         public static void GetOptionSelections(MessageReader reader)
         {
             if (reader == null) return;
-            
-            uint count =  reader.ReadPackedUInt32();
-            for (int i = 0; i < count; i++){
-                options[i].selection = Convert.ToInt32(reader.ReadPackedUInt32());
+
+            uint count = reader.ReadPackedUInt32();
+            Logger.Info($"Get New Options:{count}");
+            for (int i = 0; i < count; i++)
+            {
+                options[i].UpdateSelection(Convert.ToInt32(reader.ReadPackedUInt32()));
             }
+            Reload();
+            Logger.Info("Get!");
         }
         public static void Reload()
         {
-            options.Where(x=>x.func!=null&&x.parentId != null)
-                .Do(x => x.optionBehaviour.enabled = x.func(options.First(y => y.name == x.parentId).selection));
+            AllCheck();
         }
     }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSyncSettings))]
-    public class RpcSyncSettingsPatch
+    //[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSyncSettings))]
+    //public class RpcSyncSettingsPatch
+    //{
+    //    public static void Postfix()
+    //    {
+    //        CustomOption.ShareOptionSelections();
+    //    }
+    //}
+    [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Update))]
+    public static class GameOptionsNextPagePatch
+    {
+        public static void Postfix(KeyboardJoystick __instance)
+        {
+            if (Input.GetKeyDown(KeyCode.Tab) || ConsoleJoystick.player.GetButtonDown(7))
+            {
+
+                TSR.page++;
+                GameOptionsSetting.LoadSetting();
+                if (TSR.page >= TSR.pagecount)
+                {
+                    TSR.page = 0;
+                }
+            }
+        }
+    }
+    public static class GameOptionsSetting
+    {
+        public static List<string> Settings = [];
+        public static void LoadSetting()
+        {
+
+            string str = "";
+            foreach (CustomOption option in CustomOption.options)
+            {
+                str += $"{option.GetName()}:{option.GetSelectionName()}\n";
+            }
+
+            Settings = new();
+            Settings.Add(str);
+            TSR.pagecount = Settings.Count + 1;
+        }
+    }
+    [HarmonyPatch]
+    public static class GameSettingStart
+    {
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update)), HarmonyPostfix]
+        public static void Update(HudManager __instance)
+        {
+            if (TSR.page != 0)
+            {
+                GameOptionsSetting.LoadSetting();
+                __instance.GameSettings.text = GameOptionsSetting.Settings[0];
+            }
+
+        }
+    }
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
+    public static class LoadOptions
     {
         public static void Postfix()
         {
-            CustomOption.ShareOptionSelections();
+            if (AmongUsClient.Instance.AmHost)
+            {
+                CustomOption.ShareOptionSelections();
+            }
         }
     }
+    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined))]
+    public static class LoadJoin
+    {
 
+        public static void Postfix()
+        {
+            if (CustomOption.options == null|| CustomOption.options.Count == 0)
+            {
+                CustomOptionsHolder.CreateCustomOptions();
+            }
+        }
+    }
 
 }
