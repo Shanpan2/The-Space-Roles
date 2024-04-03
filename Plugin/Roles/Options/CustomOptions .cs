@@ -158,6 +158,7 @@ namespace TheSpaceRoles
             customroleSettings.transform.parent = cSettings.transform ;
             customroleSettings.active = false;
             customroleSettings.transform.localPosition = Vector3.zero;
+            CustomOptionSelectorHolder.CreateSelector();
             CustomOptionsHolder.CreateCustomOptions();
             CustomOptionsHolder.AllCheck();
         }
@@ -165,43 +166,38 @@ namespace TheSpaceRoles
 
     }
 
+    public enum CustomSetting
+    {
+        TSRSettings,
+        RoleSettings
+    }
     public class CustomOption
     {
-        public enum setting
-        {
-            TSRSettings,
-            RoleSettings
-        }
-        public static Transform GetTransformFromSetting(setting setting)
-        { var csetting = HudManager.Instance.transform.FindChild("CustomSettings");
-            return setting switch
-            {
-                setting.TSRSettings => csetting.FindChild("TSRSettings"),
-                setting.RoleSettings => csetting.FindChild("CustomRoleSettings"),
-                _ => csetting.FindChild("TSRSettings"),
-            }; ;
-        }
         public static int preset = 0;
         public string GetName() => Translation.GetString("tsroption." + name);
-        public string GetSelectionName() => Translation.GetString("tsroption.selection." + selections[selection]);
+        //public string GetSelectionName() => Translation.GetString("tsroption.selection.sec", [selections[selection].ToString()]);
+        public string GetSelectionName(){
 
+            return selections[selection]();
+            
+        }
         public string name;
         public string parentId;
         public int selection => entry.Value;
         public int defaultSelection;
-        public object[] selections;
+        public Func<string>[] selections;
         public ConfigEntry<int> entry;
         public GameObject @object;
         public Func<int, bool> func;
         public Action onChange;
         public OptionBehaviour optionBehaviour;
-        public setting obj_parent;
+        public CustomOptionSelectorSetting obj_parent;
         public TextMeshPro Title_TMP;
         public TextMeshPro Value_TMP;
         public SpriteRenderer right;
         public SpriteRenderer left;
-        public CustomOption(setting parent,string name,
-            object[] selections, object dafaultValue, string parentId = null, Func<int, bool> func = null, Action onChange = null
+        public CustomOption(CustomOptionSelectorSetting parent,string name,
+            Func<string>[] selections, Func<string> dafaultValue, string parentId = null, Func<int, bool> func = null, Action onChange = null
             )
         {
             this.obj_parent = parent;
@@ -220,7 +216,7 @@ namespace TheSpaceRoles
             renderer.sprite = Sprites.GetSpriteFromResources("ui.banner.png",200);
             renderer.color = Helper.ColorFromColorcode("#333333");
             @object.name = name;
-            @object.transform.parent = GetTransformFromSetting(parent);
+            @object.transform.parent = HudManager.Instance.transform.FindChild("CustomSettings").FindChild("TSRSettings").FindChild(parent.ToString()).FindChild("E");
             @object.active = true;
             @object.layer = HudManager.Instance.gameObject.layer;
             @object.transform.localPosition = Vector3.zero;
@@ -308,16 +304,34 @@ namespace TheSpaceRoles
             lbutton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
 
         }
-        public static CustomOption Create(setting parent,string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static Func<string> GetOptionSelection(string str,string[] strs = null)
         {
-            return new CustomOption(parent,name, ["Off", "On"], DefaultValue ? "On" : "Off", parentId, func, onChange);
+            return ()=> Translation.GetString("tsroption.selection."+str,strs);
         }
-        public static Func<int, bool> funcOn = x => x == 0;
-        public static Func<int, bool> funcOff = x => x != 0;
-        public static CustomOption Create(setting parent,string name, string[] selections, string selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        
+        public static Func<string> On() => GetOptionSelection("on");
+        public static Func<string> Off() => GetOptionSelection("off");
+        public static Func<string> Unlimited() => GetOptionSelection("unlimited");
+        public static Func<string> Right() => GetOptionSelection("right");
+        public static Func<string> Left() => GetOptionSelection("left");
+        public static Func<string> Sec(float x) => GetOptionSelection("second",[x.ToString()]);
+
+        public static Func<int, bool> funcOn = x => x != 0;
+        public static Func<int, bool> funcOff = x => x == 0;
+
+
+        public static CustomOption Create(CustomOptionSelectorSetting parent, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        {
+            return new CustomOption(parent, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange);
+        }
+        public static CustomOption Create(CustomOptionSelectorSetting parent,string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
             return new CustomOption(parent,name, selections, selection, parentId, func, onChange);
         }
+
+
+
+
         public void updateSelection(int newSelection)
         {
             entry.Value = ((newSelection % selections.Length )+ selections.Length ) % selections.Length ;
@@ -412,6 +426,12 @@ namespace TheSpaceRoles
             CustomOption.ShareOptionSelections();
         }
     }
-
-
+    [HarmonyPatch(typeof(GameSettingMenu),nameof(GameSettingMenu.Close))]
+    public class GameSettingMenuClosePatch
+    {
+        public static void Postfix()
+        {
+            HudManager.Instance.transform.FindChild("CustomSettings").gameObject.active = false;
+        }
+    }
 }
