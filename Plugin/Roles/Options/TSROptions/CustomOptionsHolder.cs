@@ -96,11 +96,12 @@ namespace TheSpaceRoles
 
             Create(CustomOptionSelectorSetting.InformationEquipment, "limit_binoculars",GetSecondsIncludeUnlimited(180),Unlimited()),
 
+            /*
             Create(CustomOptionSelectorSetting.General, "seee", GetSeconds(), ()=>"0"),
             Create(CustomOptionSelectorSetting.General, "seer", GetSeconds(180), ()=>"0"),
 
             Create(CustomOptionSelectorSetting.Starter, "use", GetSeconds(180,1), ()=>"0"),
-            Create(CustomOptionSelectorSetting.Starter, "user", GetSeconds(120,10), ()=>"0"),
+            Create(CustomOptionSelectorSetting.Starter, "user", GetSeconds(120,10), ()=>"0"),*/
 
             ];
         }

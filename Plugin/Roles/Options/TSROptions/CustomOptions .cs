@@ -161,6 +161,7 @@ namespace TheSpaceRoles
             CustomOptionSelectorHolder.CreateSelector();
             CustomOptionsHolder.CreateCustomOptions();
             CustomOptionsHolder.AllCheck();
+            RoleOptionsHolder.RoleOptionsCreate();
         }
 
 
@@ -431,7 +432,8 @@ namespace TheSpaceRoles
     {
         public static void Postfix()
         {
-            HudManager.Instance.transform.FindChild("CustomSettings").gameObject.active = false;
+            HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings").gameObject.active = false;
+            HudManager.Instance.transform.FindChild("CustomSettings").FindChild("TSRSettings").gameObject.active = false;
         }
     }
 }
