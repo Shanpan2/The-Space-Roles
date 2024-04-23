@@ -1,12 +1,10 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
-using Il2CppSystem;
 using InnerNet;
 using System;
 using System.Text.RegularExpressions;
 using TheSpaceRoles.Plugin;
 using UnityEngine;
-using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace TheSpaceRoles
 {
@@ -96,7 +94,7 @@ namespace TheSpaceRoles
                         }
                         else
                         {
-                            s=chat.Substring(3);
+                            s = chat.Substring(3);
                         }
                         s = s.Replace("\\n", "<br>");
                         if (s.Length > 0)
@@ -118,13 +116,13 @@ namespace TheSpaceRoles
                             name = Regex.Replace(name, "<color[^>]*?>", string.Empty);
                             name = Regex.Replace(name, "<\\color[^>]*?>", string.Empty);
                             string color = chats[1];
-                            if(color.StartsWith("#")|| color.StartsWith("0x"))
+                            if (color.StartsWith("#") || color.StartsWith("0x"))
                             {
                                 color = "#" + color;
                             }
                             var c = Helper.ColorFromColorcode(color);
                             PlayerControl.LocalPlayer.cosmetics.nameText.color = c;
-                            
+
                             break;
                         }
                     case "/gameend":
@@ -169,16 +167,38 @@ namespace TheSpaceRoles
                         try
                         {
                             GameOptionsManager.Instance.CurrentGameOptions.SetFloat((FloatOptionNames)1, float.Parse(chats[1]));
-                            addchat +=  "killcool を " + chats[1] + "にしました";
+                            addchat += "killcool を " + chats[1] + "にしました";
                         }
                         catch
                         {
-                            addchat+=  "killcoolを" + chats[1] + "にすることを失敗しました";
+                            addchat += "killcoolを" + chats[1] + "にすることを失敗しました";
                         }
                         break;
                     case "/lobbytimer":
                     case "/lt":
-                        (addchat,TSR.LobbyTimer.Value) = Helper.ChatBool(chats, "LobbyTimer", TSR.LobbyTimer, ref addchat);
+                        (addchat, TSR.LobbyTimer.Value) = Helper.ChatBool(chats, "LobbyTimer", TSR.LobbyTimer, ref addchat);
+                        break;
+                    case "/\\":
+                        for (int i = 0; i < Palette.PlayerColors.Length; i++)
+                        {
+                            string st = "";
+                            if (i <= 18)
+                            {
+                                st = Palette.ColorNames[i].ToString();
+                            }
+                            else
+                            {
+                                st =
+                                CustomColor.ColorStrings[i - 18 + 50000];
+                            }
+                            addchat += Helper.ColoredText(Palette.PlayerColors[i], "■") + Helper.ColoredText(Palette.ShadowColors[i], "■") + Helper.ColoredText(Palette.PlayerColors[i], "<b>" + st + "</b>\n");
+                        }
+                        break;
+                    case "//":
+                        for (int i = 0; i < Palette.PlayerColors.Length; i++)
+                        {
+                            addchat += Helper.ColoredText(Palette.PlayerColors[i], "■") + Helper.ColoredText(Palette.ShadowColors[i], "■") + Helper.ColoredText(Palette.PlayerColors[i], "<b>" + Palette.ColorNames[i] + "</b>\n");
+                        }
                         break;
                 }
                 if (addchat != "")

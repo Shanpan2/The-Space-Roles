@@ -19,31 +19,19 @@ public class TSR : BasePlugin
     internal static BepInEx.Logging.ManualLogSource Logger;
     public Harmony Harmony = new(Id);
 
-    public static int page = 0;
-    public static int pagecount = 0;
-
-
-
     public static TSR Instance;
     public static ConfigEntry<bool> LobbyTimer { get; set; }
 
     public override void Load()
     {
         Logger = Log;
-        Harmony.PatchAll();
         Translation.Load();
+        CustomColor.Load();
+        Harmony.PatchAll();
         // Plugin startup logic
         TheSpaceRoles.Logger.Info($"Plugin {Id} is loaded!");
         LobbyTimer = Config.Bind("Lobby", "LobbyTimer", true, "ロビータイマーを使うか");
-        
-
-
-
-        
-        
         Instance = new TSR();
-
-
     }
 
     /*
