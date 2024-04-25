@@ -4,7 +4,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 using static TheSpaceRoles.Translation;
 using Enum = System.Enum;
 
@@ -130,13 +129,13 @@ namespace TheSpaceRoles
                     HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorFromColorcode("#2222227f");
                     foreach (var item in RoleOptionTeamsHolder.TeamsHolder)
                     {
-                        if(item.@object.transform == hit2d.transform)
+                        if (item.@object.transform == hit2d.transform)
                         {
                             if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.teams))
                             {
 
                                 SelectedTeams = item.teams;
-                                HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams[(Teams)item.teams], a: 0.8f, v: -0.1f);
+                                HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams((Teams)item.teams), a: 0.8f, v: -0.1f);
                                 break;
                             }
                         }
@@ -146,7 +145,7 @@ namespace TheSpaceRoles
                             {
 
                                 SelectedTeams = item.teams;
-                                HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams[(Teams)item.teams], a: 0.8f, v: -0.1f);
+                                HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams((Teams)item.teams), a: 0.8f, v: -0.1f);
                                 break;
                             }
                         }
@@ -158,7 +157,7 @@ namespace TheSpaceRoles
                             if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.team))
                             {
                                 SelectedTeams = item.team;
-                                HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams[(Teams)item.team], a: 0.8f, v: -0.1f);
+                                HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams((Teams)item.team), a: 0.8f, v: -0.1f);
                                 break;
                             }
 
@@ -189,7 +188,7 @@ namespace TheSpaceRoles
 
                     if (SelectedTeams != null)
                     {
-                        if (RoleOptionTeamRoles.RoleOptionsInTeam.Where(x=>x.team==SelectedTeams).Any(x=>x.role==roles))
+                        if (RoleOptionTeamRoles.RoleOptionsInTeam.Where(x => x.team == SelectedTeams).Any(x => x.role == roles))
                         {
                             //人数増やす処理入れて
                             Logger.Info($"The role \"{roles}\" is alrady included");
@@ -198,8 +197,7 @@ namespace TheSpaceRoles
                         {
 
                             var ROteams = RoleOptionTeamsHolder.TeamsHolder.First(x => x.teams == (Teams)SelectedTeams);
-
-                            RoleOptionTeamRoles.RoleOptionsInTeam.Add(new RoleOptionTeamRoles(ROteams, roles));
+                            _ = new RoleOptionTeamRoles(ROteams, roles);
 
                         }
                     }
@@ -256,13 +254,13 @@ namespace TheSpaceRoles
             int team = 0;
             foreach (var roleop in RoleOptionTeamsHolder.TeamsHolder)
             {
-                roleop.SetPos(i + team * 1.2f); 
+                roleop.SetPos(i + team * 1.2f);
                 List<RoleOptionTeamRoles> items = RoleOptionTeamRoles.RoleOptionsInTeam.Where(x => x.team == roleop.teams).ToList();
                 roleop.Title_TMP.text = roleop.teams.ToString() + $"({items.Count})";
                 if (roleop.isEnable)
                 {
 
-                    
+
                     foreach (var item in items)
                     {
                         item.@object.active = true;

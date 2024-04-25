@@ -1,17 +1,14 @@
-﻿using Il2CppMicrosoft.Reflection;
-using Il2CppSystem;
-using Il2CppSystem.Dynamic.Utils;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
 {
-    public class RoleOptionTeamRoles:MonoBehaviour
+    public class RoleOptionTeamRoles : MonoBehaviour
     {
 
         public static List<RoleOptionTeamRoles> RoleOptionsInTeam = new();
@@ -38,10 +35,10 @@ namespace TheSpaceRoles
 
             var renderer = @object.AddComponent<SpriteRenderer>();
             renderer.sprite = Sprites.GetSpriteFromResources("ui.team_role_banner.png", 400);
-            if (GetLink.ColorFromTeams.ContainsKey(teams.teams))
+            if (GetLink.CustomTeamLink.Any(x => x.Team == teams.teams))
             {
 
-                renderer.color = GetLink.ColorFromTeams[teams.teams];
+                renderer.color = GetLink.ColorFromTeams(teams.teams);
             }
             else
             {
@@ -77,28 +74,49 @@ namespace TheSpaceRoles
             AddedRoleButton._CachedZ_k__BackingField = 0.1f;
             AddedRoleButton.CachedZ = 0.1f;
             AddedRoleButton.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
-            AddedRoleButton.OnClick.AddListener((System.Action)(() =>
+            AddedRoleButton.OnClick.AddListener((UnityAction)(() =>
             {
-                RoleOptionsDescription.Set(this);
+                if(this == null)
+                {
+                    foreach (var item in RoleOptionsInTeam)
+                    {
+                        if (item.role == role && item.team == team)
+                        {
+
+                            RoleOptionsDescription.Set(item);
+                        }
+                        if (item == null)
+                        {
+                            Logger.Error("null!!",item.role.ToString());
+                        }
+                    }
+
+                }
+                else
+                {
+                    RoleOptionsDescription.Set(this);
+
+                }
             }));
 
             AddedRoleButton.OnMouseOver.AddListener((System.Action)(() =>
             {
-                if (GetLink.ColorFromTeams.ContainsKey(team))
+                if (GetLink.CustomTeamLink.Any(x => x.Team == team))
                 {
-                    renderer.color = Helper.ColorEditHSV(GetLink.ColorFromTeams[team], s: -0.2f);
+                    renderer.color = Helper.ColorEditHSV(GetLink.ColorFromTeams(team), s: -0.2f);
                 }
             }));
             AddedRoleButton.OnMouseOut.AddListener((System.Action)(() =>
             {
-                if (GetLink.ColorFromTeams.ContainsKey(team))
+                if (GetLink.CustomTeamLink.Any(x => x.Team == team))
                 {
-                    renderer.color = GetLink.ColorFromTeams[team];
+                    renderer.color = GetLink.ColorFromTeams(team);
                 }
             }));
             AddedRoleButton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
             AddedRoleButton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
 
+            RoleOptionTeamRoles.RoleOptionsInTeam.Add(this);
 
         }
         public void SetPos(float num)
@@ -116,7 +134,7 @@ namespace TheSpaceRoles
         {
 
             var renderer = @object.GetComponent<SpriteRenderer>();
-            Color color = GetLink.ColorFromTeams.ContainsKey(team) ? GetLink.ColorFromTeams[team] : Color.clear;
+            Color color = GetLink.CustomTeamLink.Any(x => x.Team == team) ? GetLink.ColorFromTeams(team) : Color.clear;
 
             var drag = RoleOptionsHolder.roleOptions.First(x => x.MouseHolding).roles;
             if (!GetLink.GetCustomRole(drag).teamsSupported.Contains(team))

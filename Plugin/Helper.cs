@@ -42,7 +42,7 @@ namespace TheSpaceRoles
         }
         public static string ColoredText(Color color, string text)
         {
-            return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + text+"</color>";
+            return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + text + "</color>";
         }
 
         public static int Random(int a, int b)
@@ -55,7 +55,6 @@ namespace TheSpaceRoles
         {
             string name = (PlayerControl.LocalPlayer).name;
             Logger.Info("show chat", "", "AllAddChat");
-            string name2 = (PlayerControl.LocalPlayer).name;
             if (chpname == null)
             {
                 PlayerControl.LocalPlayer.RpcSetName($"<size=180%>{TSR.cs_name}");

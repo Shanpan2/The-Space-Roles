@@ -88,21 +88,82 @@ namespace TheSpaceRoles
             new Mini(),
         };
 
+        public static List<CustomTeam> CustomTeamLink = new()
+        {
+            new CrewmateTeam(),
+            new ImpostorTeam(),
+            new JackalTeam(),
+            new JesterTeam(),
+        };
 
         public static List<CustomRole> CustomRoleNormalLink = new()
         {
             new Crewmate(),
             new Impostor(),
         };
-        public static Dictionary<Teams, Color> ColorFromTeams = new()
+        /*public static Dictionary<Teams, Color> ColorFromTeams = new()
         {
             {Teams.Crewmate,Palette.CrewmateBlue},
             {Teams.Impostor, Palette.ImpostorRed },
             {Teams.Madmate,ColorFromColorcode("#aa1010")},
             {Teams.Jackal,ColorFromColorcode("#09afff") },
             {Teams.Jester, ColorFromColorcode("#ea618e") },
-        };
+        };*/
+        public static Color ColorFromTeams(Teams team)
+        {
+            try
+            {
+
+                return CustomTeamLink.First(x => x.Team == team).Color;
+            }
+            catch
+            {
+
+            }
+            return Color.magenta;
+
+        }
+        public static CustomTeam GetCustomTeam(Teams team)
+        {
+            if (CustomRoleLink.Any(s => s.Team == team))
+            {
+
+                return CustomTeamLink.First(x => x.Team == team);
+            }
+            else
+            {
+
+                return null;
+            }
+
+
+        }
+        public static string GetOtherColoredName => Helper.ColoredText(GetOtherRolesColor, Translation.GetString("team.other.name"));
+
         public static Color GetOtherRolesColor => ColorFromColorcode("#777777");
+
+        public static string GetColoredTeamName(Teams team)
+        {
+            if (CustomTeamLink.Any(s => s.Team == team))
+            {
+                return CustomTeamLink.First(x => x.Team == team).ColoredTeamName;
+            }
+            return ColoredText(Color.magenta, Translation.GetString("team." + team.ToString() + ".name"));
+
+
+        }
+        public static string GetColoredRoleName(Roles role)
+        {
+            if (CustomRoleLink.Any(s => s.Role == role))
+            {
+                return CustomRoleLink.First(x => x.Role == role).ColoredRoleName;
+            }
+            return ColoredText(Color.magenta, Translation.GetString("team." + role.ToString() + ".name"));
+
+
+        }
+
+        public static string GetColoredTeamName(Roles role) => GetCustomRole(role).ColoredRoleName;
 
         public static CustomRole GetCustomRole(Roles roles)
         {
@@ -123,7 +184,7 @@ namespace TheSpaceRoles
                 teams.Add(team);
 
             }
-            return teams.ToArray();
+            return [.. teams];
         }
 
     }

@@ -107,17 +107,14 @@ namespace TheSpaceRoles
             {
                 var list = DataBase.AllPlayerRoles[playerId].ToList();
                 var p = GetLink.GetCustomRole((Roles)roleId);
-                p.PlayerId = playerId;
-                p.PlayerName = DataBase.AllPlayerControls().First(x => x.PlayerId == playerId).name.Replace("<color=.*>", string.Empty).Replace("</color>", string.Empty);
+                p.ReSet(playerId);
                 list.Add(p);
                 DataBase.AllPlayerRoles[playerId] = [.. list];
             }
             else
             {
                 var p = GetLink.GetCustomRole((Roles)roleId);
-                p.PlayerId = playerId;
-                p.PlayerName = DataBase.AllPlayerControls().First(x => x.PlayerId == playerId).name.Replace("<color=.*>", string.Empty).Replace("</color>", string.Empty);
-
+                p.ReSet(playerId);
                 DataBase.AllPlayerRoles.Add(playerId, [p]);
 
             }

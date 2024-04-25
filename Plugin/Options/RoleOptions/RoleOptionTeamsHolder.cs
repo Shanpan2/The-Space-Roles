@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TheSpaceRoles
 {
@@ -11,8 +12,12 @@ namespace TheSpaceRoles
             int i = 0;
             foreach (Teams team in Enum.GetValues(typeof(Teams)))
             {
-                TeamsHolder.Add(new RoleOptionTeams(team, i));
                 i++;
+                if (GetLink.CustomTeamLink.Any(x => x.Team == team))
+                {
+                    _ = new RoleOptionTeams(team, i);
+
+                }
             }
         }
     }

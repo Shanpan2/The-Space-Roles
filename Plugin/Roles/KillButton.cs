@@ -17,7 +17,7 @@ namespace TheSpaceRoles
             if (__instance.gameObject.active == false) return;
             var player = KillButtonSetTarget(
                 GameOptionsManager.Instance.currentNormalGameOptions.KillDistance,
-                GetLink.ColorFromTeams[Teams.Impostor], notIncludeTeamIds: [Teams.Impostor]);
+                GetLink.ColorFromTeams(Teams.Impostor), notIncludeTeamIds: [Teams.Impostor]);
             if (player != -1)
             {
                 __instance.currentTarget = DataBase.AllPlayerControls().First(x => x.PlayerId == player);

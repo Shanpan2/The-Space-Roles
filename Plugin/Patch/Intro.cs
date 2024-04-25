@@ -25,7 +25,7 @@ namespace TheSpaceRoles
 
         }
 
-        public static Color TeamColor() => GetLink.ColorFromTeams[DataBase.AllPlayerTeams[PlayerControl.LocalPlayer.PlayerId]];
+        public static Color TeamColor() => GetLink.ColorFromTeams(DataBase.AllPlayerTeams[PlayerControl.LocalPlayer.PlayerId]);
     }
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
     public static class IntroShowRole

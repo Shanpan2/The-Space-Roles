@@ -58,28 +58,33 @@ deathreason.impostorkill,Killed By Impostor,,,,,,,,,,,殺害,,,,,殺害
 deathreason.sheriffkill,Killed By Sheriff,,,,,,,,,,,射殺,,,,,射殺
 deathreason.sheriffsuicide,Suicide By Sheriff,,,,,,,,,,,自爆,,,,,自爆
 ,,,,,,,,,,,,,,,,,
+intro.cosmetic,~{0}~,,,,,,,,,,,～{0}～,,,,,～{0}～
+wincondition.pre,Victory conditions : {0},,,,,,,,,,,勝利条件 : {0},,,,,
+canvisibleteam,,,,,,,,,,,,出現可能陣営 : {0},,,,,
 ,,,,,,,,,,,,,,,,,
 ##Team,,,,,,,,,,,,,,,,,
 #other teams,,,,,,,,,,,,,,,,,
 team.other.name,Neutral,,,,,,,,,,,ニュートラル,,,,,第三陣営
+team.all.name,All,,,,,,,,,,,すべて,,,,,
 #crewmate,,,,,,,,,,,,,,,,,
 team.crewmate.name,Crewmate,,,,,,,,,,,クルー,,,,,村人陣営
-team.crewmate.description,comming soon...,,,,,,,,,,,"<size=130%>{team.crewmate.coloredname}</size>
-目的:タスクを全て完了するかインポスターを全員この船から追放すること
-クルーメイトの目的は与えられたタスクを完了しこの船を全て修理する、またはこの中に潜んでいるインポスターを追放することだ。タスクを進めながらアドミン、カメラ、バイタルを上手く活用し、インポスターを特定しろ。
-また、場合によってはインポスター以外にも我々の中に皆殺しを目的としている者がいるかもしれない...",,,,,
+team.crewmate.sname,(C),,,,,,,,,,,(C),,,,,
+team.crewmate.description,comming soon...,,,,,,,,,,,"与えられたタスクをすべて完了させろ。あるいは仲間の中に潜んでいる{team.impostor.coloredname}を追放しろ。タスクを進めながらアドミン、カメラ、バイタルを上手く活用し、インポスターを特定しろ。\nまた,{team.impostor.coloredname}以外にも我々の中に皆殺しを目的としている者がいるかもしれない...",,,,,
+team.crewmate.wincondition,,,,,,,,,,,,タスクの完了、{team.impostor.coloredname}や{team.other.coloredname}などのキルできる役職の追放,,,,,
 ,,,,,,,,,,,,,,,,,
 #impostor,,,,,,,,,,,,,,,,,
 team.impostor.name,Impostor,,,,,,,,,,,インポスター,,,,,人狼陣営
+team.crewmate.sname,(I),,,,,,,,,,,(I),,,,,
 team.impostor.intro,Do the task and eject the Imposter,,,,,,,,,,,タスクを行い、インポスターを追放しろ,,,,,
-team.impostor.description,comming soon...,,,,,,,,,,,"<size=130%>{team.impostor.coloredname}</size>
-勝利条件:{team.crewmate.coloredname}とその他の陣営を全員殺害するかサボタージュでこの船を破壊すること
-ベントやサボタージュを上手く活用し、{team.crewmate.coloredname}を皆殺しにしてやろう。時にはタスクをしているフリをしたり、緊急会議を招集することで{team.crewmate.coloredname}から仲間だと思わせるのも大切だ。",,,,,
+team.impostor.description,comming soon...,,,,,,,,,,,\n勝利条件:{team.crewmate.coloredname}とその他の陣営を全員殺害するかサボタージュでこの船を破壊すること\nベントやサボタージュを上手く活用し、{team.crewmate.coloredname}を皆殺しにしてやろう。時にはタスクをしているフリをしたり、緊急会議を招集することで{team.crewmate.coloredname}から仲間だと思わせるのも大切だ。,,,,,
+,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,
 team.madmate.name,Madmate,,,,,,,,,,,マッドメイト,,,,,狂人陣営
+team.madmate.sname,(M),,,,,,,,,,,,,,,,
 team.jester.name,Jester,,,,,,,,,,,ジェスター,,,,,てるてる陣営
+team.jester.sname,(Je),,,,,,,,,,,,,,,,
 team.jackal.name,Jackal,,,,,,,,,,,ジャッカル,,,,,
-,,,,,,,,,,,,,,,,,
+team.jackal.sname,(J),,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,
 ##Role,,,,,,,,,,,,,,,,,
 #crewmate,,,,,,,,,,,,,,,,,
@@ -96,11 +101,8 @@ role.impostor.sintro,Kill the all the {team.crewmate.coloredname},,,,,,,,,,,{tea
 role.sheriff.name,Sheriff,,,,,,,,,,,シェリフ,,,,,執行官
 role.sheriff.intro,Let justice be done,,,,,,,,,,,正義の鉄槌を,,,,,正義の鉄槌を
 role.sheriff.sintro,Let justice be done,,,,,,,,,,,正義の鉄槌を,,,,,正義の鉄槌を
-role.sheriff.description,coming soon,,,,,,,,,,,"所属陣営:{team.crewmate.coloredname}
-シェリフはキルボタンを持ち、インポスターやその他のクルーメイト以外の陣営をキルすることができる。
-しかし誤ってクルーメイトをキルしようとしてしまうと自爆してしまう。
-怪しい人をキルしてクルーメイト陣営を勝利に導こう。",,,,,
-怪しい人をキルしてクルーメイト陣営を勝利に導こう。,,,,,,,,,,,,,,,,,
+role.sheriff.description,coming soon,,,,,,,,,,,"{role.sheriff.coloredname}はキルボタンを持ち、{team.impostor.coloredname}や{team.other.coloredname}の陣営をキルすることができる。\nしかし誤って{team.crewmate.coloredname}をキルしようとしてしまうと自爆してしまう。\n怪しい人をキルして{team.crewmate.coloredname}を勝利に導こう。""",,,,,怪しい人をキルしてクルーメイト陣営を勝利に導こう。
+,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,
 #mini,,,,,,,,,,,,,,,,,
 role.mini.name,Mini,,,,,,,,,,,ミニ,,,,,小人
