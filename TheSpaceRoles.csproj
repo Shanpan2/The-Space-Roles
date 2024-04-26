@@ -25,23 +25,15 @@
         <EmbeddedResource Include="Resources\**" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="Resources\ui\role_option.png" />
-    </ItemGroup>
-
 	<ItemGroup>
 		<Reference Include="$(AmongUs)/BepInEx/core/*.dll" />
 		<Reference Include="$(AmongUs)/BepInEx/interop/*.dll" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Compile Remove="Plugin\Roles\新しいフォルダー\**" />
-	  <EmbeddedResource Remove="Plugin\Roles\新しいフォルダー\**" />
-	  <None Remove="Plugin\Roles\新しいフォルダー\**" />
-	</ItemGroup>
 
 
     <Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AmongUs)/BepInEx/plugins/" UseSymboliclinksIfPossible="true" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="Pre" UseSymboliclinksIfPossible="true" />
     </Target>
 </Project>
