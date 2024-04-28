@@ -47,30 +47,39 @@ namespace TheSpaceRoles
         public string RoleName => Translation.GetString("role." + Role.ToString() + ".name");
 
         public string ColoredIntro => ColoredText(Color, Translation.GetString("intro.cosmetic", [Translation.GetString("role." + Role.ToString() + ".intro")]));
-        public string Description()
+        public string RoleDescription()
         {
             string r = "";
+            string f = "";
             if (teamsSupported.Length == Enum.GetValues(typeof(Teams)).Length)
             {
-                r += $"<b>{Translation.GetString("team.all.name")}</b>";
+                f += $"<b>{Translation.GetString("team.all.name")}</b>";
             }
             else
             {
                 int i = 0;
                 foreach (var item in teamsSupported)
                 {
+                    f += "<b>" + GetLink.GetCustomTeam(item).ColoredTeamName + "</b>";
 
-                    r += "<b>" + Translation.GetString("team." + item.ToString() + ".name") + "</b>";
+
+
                     i++;
-                    if (i + 1 != teamsSupported.Length)
+                    if (i != teamsSupported.Length)
                     {
-                        r += ",";
+                        f += ",";
                     }
                 }
 
             }
-            r += "\n";
-            return r.ToString();
+            r += $"{Translation.GetString("canvisibleteam", [f])}\n";
+            r += Description();
+
+            return r;
+        }
+        public string Description()
+        {
+            return $"{Translation.GetString($"role.{Role}.description")}\n ";
         }
 
 

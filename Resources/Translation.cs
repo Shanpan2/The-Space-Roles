@@ -116,13 +116,12 @@ namespace TheSpaceRoles
                             }
                             else
                             {
-                                getstr = getstr.Replace("{" + item + "}", GetLink.GetColoredTeamName((Teams)Enum.Parse(typeof(Teams), items[1], true)));
+                                getstr = getstr.Replace("{" + item + "}", GetLink.GetCustomTeam((Teams)Enum.Parse(typeof(Teams), items[1], true)).ColoredTeamName);
 
                             }
 
                         }
                     }
-                    return getstr;
                 }
                 catch
                 {

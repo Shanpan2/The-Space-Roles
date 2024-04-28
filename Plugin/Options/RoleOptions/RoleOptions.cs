@@ -17,12 +17,12 @@ namespace TheSpaceRoles
         public GameObject @object;
         public int num = 0;
         public TextMeshPro Title_TMP;
-        public RoleOptions(Roles roles, int i)
+        public RoleOptions(Roles role, int i)
         {
-            this.roles = roles;
+            this.roles = role;
             //Logger.Info(roles.ToString());
             this.num = i;
-            @object = new GameObject(roles.ToString());
+            @object = new GameObject(role.ToString());
             @object.active = true;
             var renderer = @object.AddComponent<SpriteRenderer>();
             renderer.sprite = Sprites.GetSpriteFromResources("ui.role_option.png", 400);
@@ -36,7 +36,7 @@ namespace TheSpaceRoles
             Title_TMP.transform.SetParent(@object.transform);
             Title_TMP.fontStyle = FontStyles.Bold;
             Title_TMP.text = GetRoleName;
-            Title_TMP.color = GetLink.GetCustomRole(roles).Color;
+            Title_TMP.color = GetLink.GetCustomRole(role).Color;
             Title_TMP.fontSize = Title_TMP.fontSizeMax = 2f;
             Title_TMP.fontSizeMin = 1f;
             Title_TMP.alignment = TextAlignmentOptions.Left;
@@ -61,17 +61,17 @@ namespace TheSpaceRoles
             Button.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             Button.OnClick.AddListener((System.Action)(() =>
             {
-                RoleOptionsDescription.Set(this);
+                RoleOptionsDescription.Set(role);
             }));
 
             Button.OnMouseOver.AddListener((System.Action)(() =>
             {
-                renderer.color = RoleOptionsHolder.selectedRoles == roles ? Helper.ColorFromColorcode("#cccccc") : Helper.ColorFromColorcode("#555555");
+                renderer.color = RoleOptionsHolder.selectedRoles == role ? Helper.ColorFromColorcode("#cccccc") : Helper.ColorFromColorcode("#555555");
                 MouseOver = true;
             }));
             Button.OnMouseOut.AddListener((System.Action)(() =>
             {
-                renderer.color = RoleOptionsHolder.selectedRoles == roles ? Helper.ColorFromColorcode("#cccccc") : Helper.ColorFromColorcode("#222222");
+                renderer.color = RoleOptionsHolder.selectedRoles == role ? Helper.ColorFromColorcode("#cccccc") : Helper.ColorFromColorcode("#222222");
                 MouseOver = false;
             }));
             Button.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
@@ -83,7 +83,7 @@ namespace TheSpaceRoles
         public float timer = 0;
         public GameObject HoldinggameObject;
         public Vector3 mousePos = Vector3.zero;
-        public static Teams? SelectedTeams;
+        public static Teams SelectedTeams;
         private static Vector3 GetMouse => Camera.allCameras.First(x => x.name == "UI Camera").ScreenToWorldPoint(Input.mousePosition);
         public void MouseOverUpdate()
         {
@@ -104,6 +104,7 @@ namespace TheSpaceRoles
 
                     MouseHolding = true;
                     DragMode = true;
+                    try { GameObject.Destroy(HoldinggameObject); } catch { }
                     HoldinggameObject = UnityEngine.Object.Instantiate(@object);
                     mousePos = @object.transform.position - GetMouse;
                     HoldinggameObject.transform.SetParent(@object.transform.parent);
@@ -125,7 +126,7 @@ namespace TheSpaceRoles
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit2D hit2d = Physics2D.Raycast(ray.origin, ray.direction);
 
-                    SelectedTeams = null;
+                    SelectedTeams = Teams.None;
                     HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorFromColorcode("#2222227f");
                     foreach (var item in RoleOptionTeamsHolder.TeamsHolder)
                     {
@@ -150,18 +151,22 @@ namespace TheSpaceRoles
                             }
                         }
                     }
-                    foreach (var item in RoleOptionTeamRoles.RoleOptionsInTeam)
+                    if(Teams.None == SelectedTeams)
                     {
-                        if (item.@object.transform.position == hit2d.transform.position)
+                        foreach (var item in RoleOptionTeamRoles.RoleOptionsInTeam)
                         {
-                            if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.team))
+                            if (item.@object.transform.position == hit2d.transform.position)
                             {
-                                SelectedTeams = item.team;
-                                HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams((Teams)item.team), a: 0.8f, v: -0.1f);
-                                break;
-                            }
+                                if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.team))
+                                {
+                                    SelectedTeams = item.team;
+                                    HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams((Teams)item.team), a: 0.8f, v: -0.1f);
+                                    break;
+                                }
 
+                            }
                         }
+
                     }
 
                     //var roleoptionbehavior = hit2d.transform?.gameObject?.GetComponentInChildren<RoleOptionBehavior>();
@@ -185,10 +190,10 @@ namespace TheSpaceRoles
             {
                 if (HoldinggameObject != null)
                 {
-
-                    if (SelectedTeams != null)
+                    if (RoleOptionTeamsHolder.TeamsHolder.Any(x => x.teams == SelectedTeams))
                     {
-                        if (RoleOptionTeamRoles.RoleOptionsInTeam.Where(x => x.team == SelectedTeams).Any(x => x.role == roles))
+
+                        if (RoleOptionTeamRoles.RoleOptionsInTeam.Any(x => x.role == roles))
                         {
                             //人数増やす処理入れて
                             Logger.Info($"The role \"{roles}\" is alrady included");
@@ -196,8 +201,8 @@ namespace TheSpaceRoles
                         else
                         {
 
-                            var ROteams = RoleOptionTeamsHolder.TeamsHolder.First(x => x.teams == (Teams)SelectedTeams);
-                            _ = new RoleOptionTeamRoles(ROteams, roles);
+                            var ROteams = RoleOptionTeamsHolder.TeamsHolder.First(x => x.teams == SelectedTeams).teams;
+                            RoleOptionTeamRoles.RoleOptionsInTeam.Add(new RoleOptionTeamRoles(ROteams, roles));
 
                         }
                     }
@@ -211,7 +216,7 @@ namespace TheSpaceRoles
                     _ = Time.deltaTime;
 
                     timer = 0;
-                    SelectedTeams = null;
+                    SelectedTeams = Teams.None;
                 }
             }
         }

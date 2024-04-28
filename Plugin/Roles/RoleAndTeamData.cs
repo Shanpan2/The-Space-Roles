@@ -59,7 +59,8 @@ namespace TheSpaceRoles
     }
     public enum Teams : int
     {
-        Crewmate = 0,
+        None = 0,
+        Crewmate,
         Madmate,
         Impostor,
         Jackal,
@@ -80,27 +81,27 @@ namespace TheSpaceRoles
     public static class GetLink
     {
 
-        public static List<CustomRole> CustomRoleLink = new()
-        {
+        public static List<CustomRole> CustomRoleLink =
+        [
             new Crewmate(),
             new Impostor(),
             new Sheriff(),
             new Mini(),
-        };
+        ];
 
-        public static List<CustomTeam> CustomTeamLink = new()
-        {
+        public static List<CustomTeam> CustomTeamLink =
+        [
             new CrewmateTeam(),
             new ImpostorTeam(),
             new JackalTeam(),
             new JesterTeam(),
-        };
+        ];
 
-        public static List<CustomRole> CustomRoleNormalLink = new()
-        {
+        public static List<CustomRole> CustomRoleNormalLink =
+        [
             new Crewmate(),
             new Impostor(),
-        };
+        ];
         /*public static Dictionary<Teams, Color> ColorFromTeams = new()
         {
             {Teams.Crewmate,Palette.CrewmateBlue},
@@ -125,16 +126,8 @@ namespace TheSpaceRoles
         }
         public static CustomTeam GetCustomTeam(Teams team)
         {
-            if (CustomRoleLink.Any(s => s.Team == team))
-            {
-
-                return CustomTeamLink.First(x => x.Team == team);
-            }
-            else
-            {
-
-                return null;
-            }
+            if (!CustomTeamLink.Any(x => x.Team == team)) { Logger.Error($"{team} is not contained in RoleMasterLink"); return null; }
+            return CustomTeamLink.First(x => x.Team == team);
 
 
         }

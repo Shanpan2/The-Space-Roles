@@ -90,11 +90,11 @@ namespace TheSpaceRoles
                         string s;
                         if (chats[0] == "/name")
                         {
-                            s = chat.Substring(6);
+                            s = chat[6..];
                         }
                         else
                         {
-                            s = chat.Substring(3);
+                            s = chat[3..];
                         }
                         s = s.Replace("\\n", "<br>");
                         if (s.Length > 0)

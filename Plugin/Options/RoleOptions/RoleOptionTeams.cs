@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,11 +16,11 @@ namespace TheSpaceRoles
         public PassiveButton DropDownButton;
         public PassiveButton TeamButton;
         //public RoleOptionBehavior behavior;
-        public RoleOptionTeams(Teams teams, int num)
+        public RoleOptionTeams(Teams team, int num)
         {
             this.num = num;
-            this.teams = teams;
-            @object = new GameObject("RoleOptionTeams-" + teams.ToString())
+            this.teams = team;
+            @object = new GameObject("RoleOptionTeams-" + team.ToString())
             {
                 active = true
             };
@@ -31,9 +30,9 @@ namespace TheSpaceRoles
             @object.layer = HudManager.Instance.gameObject.layer;
             var renderer = @object.AddComponent<SpriteRenderer>();
             renderer.sprite = Sprites.GetSpriteFromResources("ui.team_banner_top.png", 400);
-            if (GetLink.CustomTeamLink.Any(x => x.Team == teams))
+            if (GetLink.CustomTeamLink.Any(x => x.Team == team))
             {
-                renderer.color = GetLink.ColorFromTeams(teams);
+                renderer.color = GetLink.ColorFromTeams(team);
 
             }
             else
@@ -54,7 +53,7 @@ namespace TheSpaceRoles
             Title_TMP = new GameObject("Title_TMP").AddComponent<TextMeshPro>();
             Title_TMP.transform.SetParent(@object.transform);
             Title_TMP.fontStyle = FontStyles.Bold;
-            Title_TMP.text = GetLink.GetColoredTeamName(teams);
+            Title_TMP.text = GetLink.GetColoredTeamName(team);
             Title_TMP.color = Color.white;
             Title_TMP.fontSize = Title_TMP.fontSizeMax = 2f;
             Title_TMP.fontSizeMin = 1f;
@@ -80,37 +79,22 @@ namespace TheSpaceRoles
             TeamButton.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             TeamButton.OnClick.AddListener((System.Action)(() =>
             {
-                if (this == null)
-                {
-                    foreach (var item in RoleOptionTeamsHolder.TeamsHolder)
-                    {
-                        if (item.teams == teams)
-                        {
-
-                            RoleOptionsDescription.Set(item);
-                        }
-                    }
-
-                }
-                else
-                {
-                    RoleOptionsDescription.Set(this);
-
-                }
+                RoleOptionsDescription.Set(team);
             }));
 
             TeamButton.OnMouseOver.AddListener((System.Action)(() =>
             {
-                if (GetLink.CustomTeamLink.Any(x => x.Team == teams))
+                Logger.Info(team.ToString());
+                if (GetLink.CustomTeamLink.Any(x => x.Team == team))
                 {
-                    renderer.color = Helper.ColorEditHSV(GetLink.ColorFromTeams(teams), s: -0.2f);
+                    renderer.color = Helper.ColorEditHSV(GetLink.ColorFromTeams(team), s: -0.2f);
                 }
             }));
             TeamButton.OnMouseOut.AddListener((System.Action)(() =>
             {
-                if (GetLink.CustomTeamLink.Any(x => x.Team == teams))
+                if (GetLink.CustomTeamLink.Any(x => x.Team == team))
                 {
-                    renderer.color = GetLink.ColorFromTeams(teams);
+                    renderer.color = GetLink.ColorFromTeams(team);
                 }
             }));
             TeamButton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
@@ -142,7 +126,7 @@ namespace TheSpaceRoles
             {
                 isEnable = !isEnable;
                 DropDown.sprite = isEnable ? Sprites.GetSpriteFromResources("ui.arrow_drop_down.png", 50) : Sprites.GetSpriteFromResources("ui.arrow_drop_up.png", 50);
-                Logger.Info(isEnable.ToString(), teams.ToString());
+                Logger.Info(isEnable.ToString(), team.ToString());
             }));
 
             DropDownButton.OnMouseOver.AddListener((System.Action)(() =>
@@ -156,6 +140,7 @@ namespace TheSpaceRoles
             DropDownButton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
             DropDownButton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
             RoleOptionTeamsHolder.TeamsHolder.Add(this);
+            Logger.Info("Teams"+teams.ToString());
         }
         public void SetPos(float num)
         {

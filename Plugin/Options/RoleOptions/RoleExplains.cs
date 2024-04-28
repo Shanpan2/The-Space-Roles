@@ -93,39 +93,23 @@ namespace TheSpaceRoles
             Description.enableAutoSizing = false;
         }
 
-        public static SelectingType selecting = SelectingType.None;
-        public static RoleOptionTeams selectedTeam;
-        public static RoleOptions selectedRole;
-        public static RoleOptionTeamRoles selectedAddedRole;
-        public static void Set(RoleOptions select)
+        public static void Set(Roles roles)
         {
-            selectedRole = select;
-            selecting = SelectingType.Role;
-            var c = GetLink.GetCustomRole(select.roles);
+            var c = GetLink.GetCustomRole(roles);
             SetDescription(c.ColoredRoleName, c.ColoredIntro, c.Description());
 
         }
-        public static void Set(RoleOptionTeams select)
+        public static void Set(Teams teams)
         {
-            selectedTeam = select;
-            selecting = SelectingType.Team;
-            var c = GetLink.GetCustomTeam(select.teams);
-            SetDescription(c.ColoredTeamName, c.ColoredIntro, c.Description);
+            var t = GetLink.GetCustomTeam(teams);
+            if (t == null)  Logger.Info("t is null");
+            SetDescription(t.ColoredTeamName, t.ColoredIntro, t.Description);
         }
-        public static void Set(RoleOptionTeamRoles select)
+        public static void Set(Teams teams,Roles roles)
         {
-            selectedAddedRole = select;
-            selecting = SelectingType.AddedRole;
-            var r = GetLink.GetCustomRole(select.role);
-            var t = GetLink.GetCustomTeam(select.team);
-            SetDescription(r.ColoredRoleName + t.ColoredShortRoleName, r.ColoredIntro, r.Description());
-        }
-        public static void Reset()
-        {
-            selectedRole = null;
-            selectedTeam = null;
-            selectedRole = null;
-            selecting = SelectingType.None;
+            var r = GetLink.GetCustomRole(roles);
+            var t = GetLink.GetCustomTeam(teams);
+            SetDescription(r.ColoredRoleName + t.ColoredShortTeamName, r.ColoredIntro, t.WinConditionTeam+"\n"+r.Description());
         }
         public static void SetDescription(string Title_, string Intro_, string Description_)
         {

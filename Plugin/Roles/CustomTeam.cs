@@ -19,9 +19,10 @@ namespace TheSpaceRoles
         public string ColoredTeamName => ColoredText(Color, Translation.GetString("team." + Team.ToString() + ".name"));
         public string RoleName => Translation.GetString("team." + Team.ToString() + ".name");
         public string ShortRoleName => Translation.GetString("team." + Team.ToString() + ".sname");
-        public string ColoredShortRoleName => ColoredText(Color, Translation.GetString("team." + Team.ToString() + ".sname"));
+        public string ColoredShortTeamName => ColoredText(Color, Translation.GetString("team." + Team.ToString() + ".sname"));
         public string ColoredIntro => ColoredText(Color, Translation.GetString("intro.cosmetic", [Translation.GetString("team." + Team.ToString() + ".intro")]));
-        public string Description => Translation.GetString("team." + Team.ToString() + ".description"); 
+        public string Description => Translation.GetString("team." + Team.ToString() + ".description");
+        public string WinConditionTeam=>Translation.GetString("wincondition.pre" ,[Translation.GetString("team." + Team.ToString() + ".wincondition")]);
         public virtual void WinCheck() { }
     }
 }
