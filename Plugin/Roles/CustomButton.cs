@@ -6,6 +6,16 @@ using UnityEngine;
 namespace TheSpaceRoles
 {
 
+    public enum ButtonPos
+    {
+        Use = 0,
+        Report,
+        Sabotage,
+        Vent,
+        Kill,
+        Custom,
+
+    }
     public class CustomButton : ActionButton
     {
         /// <summary>
@@ -13,7 +23,6 @@ namespace TheSpaceRoles
         /// CustomButtonを入れる
         /// </summary>
         public static List<CustomButton> buttons = new() { };
-
 
 
         public static Vector2 SelectButtonPos(int c) => c switch
@@ -27,10 +36,11 @@ namespace TheSpaceRoles
             6 => new Vector2(-8, 0),
             _ => new Vector2(-3, 3),
         };
-
+        
 
         public ActionButton actionButton;
         public HudManager hudManager;
+        public ButtonPos ButtonPosition;
         public float maxTimer;
         public float Timer;
 
@@ -56,7 +66,7 @@ namespace TheSpaceRoles
         public bool IsDead = false;
         public CustomButton(
             HudManager hudManager,
-            Vector2 pos,
+            ButtonPos buttonPos,
             KeyCode keycode,
             float maxTimer,
             Func<int> canUse,
@@ -72,6 +82,7 @@ namespace TheSpaceRoles
             Action OnEffectEnd = null
             )
         {
+            this.ButtonPosition= buttonPos;
             this.hudManager = hudManager;
             this.keyCode = keycode;
             this.OnClick = Onclick;
@@ -91,8 +102,8 @@ namespace TheSpaceRoles
             actionButton = Instantiate(hudManager.KillButton, hudManager.KillButton.transform.parent);
             actionButton.buttonLabelText.text = buttonText;
             actionButton.graphic.sprite = sprite;
-            actionButton.transform.position.Set(pos.x, pos.y, -9);
-            actionButton.cooldownTimerText.text = ((int)Timer).ToString();
+            actionButton.cooldownTimerText.text = ((int)Timer).ToString(); 
+            this.actionButton.transform.SetSiblingIndex((int)ButtonPosition);
             PassiveButton passiveButton = actionButton.GetComponent<PassiveButton>();
             passiveButton.enabled = true;
 

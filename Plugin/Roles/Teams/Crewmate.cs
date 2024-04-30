@@ -12,7 +12,7 @@
             CanUseBinoculars = true;
             CanUseCamera = true;
             CanUseDoorlog = true;
-            CanUseVent = true;
+            CanUseVent = false;
             CanUseVital = true;
             HasTask = true;
         }

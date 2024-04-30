@@ -38,6 +38,19 @@ namespace TheSpaceRoles
 
 
         }
+        public void ResetStart()
+        {
+
+            HudManager.Instance.ImpostorVentButton.gameObject.SetActive((bool)CanUseVent);
+            HudManager.Instance.KillButton.gameObject.SetActive((bool)HasKillButton);
+            if ((bool)HasKillButton)
+            {
+                HudManager.Instance.KillButton.ResetCoolDown();
+            }
+            else
+            {
+            }
+        }
         public virtual void HudManagerStart(HudManager hudManager) { }
         public virtual void Killed() { }
         public virtual void WasKilled() { }
@@ -117,6 +130,7 @@ namespace TheSpaceRoles
                 //Logger.Info(string.Join(",", k));
 
                 DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.HudManagerStart(__instance));
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.ResetStart());
             }
 
 

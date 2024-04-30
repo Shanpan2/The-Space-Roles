@@ -12,7 +12,7 @@ namespace TheSpaceRoles
             teamsSupported = [Teams.Crewmate];
             Role = Roles.Sheriff;
             Color = ColorFromColorcode("#ffd700");
-            HasKillButton = true;
+            HasKillButton = false;
         }
         public override void HudManagerStart(HudManager __instance)
         {
@@ -22,7 +22,7 @@ namespace TheSpaceRoles
             }
             SheriffKillButton = new CustomButton(
                 __instance,
-                CustomButton.SelectButtonPos(0),
+                ButtonPos.Kill,
                 KeyCode.Q,
                 30,
                 () => KillButtons.KillButtonSetTarget(2.5f, Color),
