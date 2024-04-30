@@ -24,7 +24,7 @@ namespace TheSpaceRoles
 
             }
             VampireBitebutton = new CustomButton(
-                __instance,
+                __instance,"VampireKillButton",
                 ButtonPos.Kill,
                 KeyCode.Q,
                 30,

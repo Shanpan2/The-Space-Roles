@@ -19,6 +19,14 @@ namespace TheSpaceRoles
 
                 Logger.Info($"Death, reason:{reason}");
             }*/
+            if (id1== PlayerControl.LocalPlayer.PlayerId)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.Killed());
+            }
+            if (id2== PlayerControl.LocalPlayer.PlayerId)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.WasKilled());
+            }
         }
         public static void RpcMurder(PlayerControl source, PlayerControl target, DeathReason reason, bool DoCustomRpcMurder = true)
         {
@@ -46,6 +54,14 @@ namespace TheSpaceRoles
 
                 Logger.Info($"Death, reason:{reason}");
             }*/
+            if (id1 == PlayerControl.LocalPlayer.PlayerId)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.Killed());
+            }
+            if (id2 == PlayerControl.LocalPlayer.PlayerId)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.WasKilled());
+            }
         }
         public static void RpcMurder(PlayerControl source, PlayerControl target, DeathReason reason, bool DoCustomRpcMurder = true)
         {

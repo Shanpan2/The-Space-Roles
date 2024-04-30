@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace TheSpaceRoles
@@ -36,8 +37,8 @@ namespace TheSpaceRoles
             6 => new Vector2(-8, 0),
             _ => new Vector2(-3, 3),
         };
-        
 
+        public string name;
         public ActionButton actionButton;
         public HudManager hudManager;
         public ButtonPos ButtonPosition;
@@ -52,8 +53,9 @@ namespace TheSpaceRoles
         public Func<int> CanUse;
         public string buttonText = "";
         public bool atFirsttime;
+        public TextMeshPro AddtionalText;
 
-        public Sprite sprite;
+                public Sprite sprite;
         public KeyCode keyCode;
         public Action OnClick;
         public Action OnMeetingEnds;
@@ -66,6 +68,7 @@ namespace TheSpaceRoles
         public bool IsDead = false;
         public CustomButton(
             HudManager hudManager,
+            string name,
             ButtonPos buttonPos,
             KeyCode keycode,
             float maxTimer,
@@ -82,6 +85,7 @@ namespace TheSpaceRoles
             Action OnEffectEnd = null
             )
         {
+            this.name = name;
             this.ButtonPosition= buttonPos;
             this.hudManager = hudManager;
             this.keyCode = keycode;
@@ -102,7 +106,8 @@ namespace TheSpaceRoles
             actionButton = Instantiate(hudManager.KillButton, hudManager.KillButton.transform.parent);
             actionButton.buttonLabelText.text = buttonText;
             actionButton.graphic.sprite = sprite;
-            actionButton.cooldownTimerText.text = ((int)Timer).ToString(); 
+            actionButton.cooldownTimerText.text = ((int)Timer).ToString();
+            actionButton.gameObject.name = name;
             this.actionButton.transform.SetSiblingIndex((int)ButtonPosition);
             PassiveButton passiveButton = actionButton.GetComponent<PassiveButton>();
             passiveButton.enabled = true;
@@ -115,6 +120,25 @@ namespace TheSpaceRoles
 
             }
             catch (Exception ex) { Logger.Error(ex.ToString()); }
+
+
+            
+            var gameob = new GameObject("Text");
+            gameob.transform.SetParent(actionButton.transform);
+            gameob.SetActive(true);
+            AddtionalText = gameob.AddComponent<TextMeshPro>();
+            AddtionalText.color = Color.white;
+            AddtionalText.fontSizeMin = AddtionalText.fontSize = AddtionalText.fontSizeMax = 1.2f;
+            AddtionalText.alignment = TextAlignmentOptions.Center;
+            AddtionalText.outlineWidth = 0.8f;
+            AddtionalText.enableWordWrapping = false;
+            AddtionalText.autoSizeTextContainer = true;
+            AddtionalText.transform.localPosition = new Vector3(0f, 0.6f, -1f);
+            AddtionalText.gameObject.layer = HudManager.Instance.gameObject.layer;
+            AddtionalText.m_sharedMaterial = Data.textMaterial;
+
+
+
 
 
             DataBase.buttons.Add(this);

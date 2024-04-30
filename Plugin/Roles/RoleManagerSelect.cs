@@ -43,7 +43,8 @@ namespace TheSpaceRoles
                 Dictionary<Teams, int> roles = new Dictionary<Teams, int>() { { Teams.Impostor, 1 } };
                 SendRpcSetTeam(roles);
                 SendRpcSetRole(Roles.Sheriff, DataBase.AllPlayerTeams.Where(x => new Sheriff().teamsSupported.Contains(x.Value)).Select(x => x.Key).ToArray());
-                SendRpcSetRole(Roles.Vampire, DataBase.AllPlayerTeams.Where(x => new Vampire().teamsSupported.Contains(x.Value)).Select(x => x.Key).ToArray());
+                //SendRpcSetRole(Roles.Vampire, DataBase.AllPlayerTeams.Where(x => new Vampire().teamsSupported.Contains(x.Value)).Select(x => x.Key).ToArray());
+                SendRpcSetRole(Roles.SerialKiller, DataBase.AllPlayerTeams.Where(x => new SerialKiller().teamsSupported.Contains(x.Value)).Select(x => x.Key).ToArray());
                 RemainingPlayerSetRoles();
                 SendRpcSetRole(Roles.Mini, DataBase.AllPlayerTeams.Where(x => new Mini().teamsSupported.Contains(x.Value)).Select(x => x.Key).ToArray());
 

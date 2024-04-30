@@ -33,6 +33,7 @@ namespace TheSpaceRoles
         Pursuer,//追跡者?
         Thief,//泥棒?
         Vampire,//ヴァンパイア
+        SerialKiller,//シリアルキラー
 
 
 
@@ -91,6 +92,7 @@ namespace TheSpaceRoles
             new Sheriff(),
             new Mini(),
             new Vampire(),
+            new SerialKiller(),
         ];
 
         public static List<CustomTeam> CustomTeamLink =

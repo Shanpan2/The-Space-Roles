@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using InnerNet;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -6,6 +7,7 @@ using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
 {
+    [HarmonyPatch]
     public abstract class CustomRole
     {
         public int PlayerId;
@@ -40,18 +42,27 @@ namespace TheSpaceRoles
         }
         public void ResetStart()
         {
-
+            ActionBool(HudManager.Instance.ImpostorVentButton, (bool)CanUseVent);
+            ActionBool(HudManager.Instance.KillButton, (bool)HasKillButton);
             HudManager.Instance.ImpostorVentButton.gameObject.SetActive((bool)CanUseVent);
             HudManager.Instance.KillButton.gameObject.SetActive((bool)HasKillButton);
-            if ((bool)HasKillButton)
+        }
+        protected void ActionBool(ActionButton button,bool show_hide)
+        {
+            if(show_hide)
             {
-                HudManager.Instance.KillButton.ResetCoolDown();
+                button.enabled = true;
+                button.gameObject.SetActive(true);
             }
             else
+                button.enabled = false;
+            button.gameObject.SetActive(false);
             {
+                button.Hide();
             }
         }
         public virtual void HudManagerStart(HudManager hudManager) { }
+        public virtual void MeetingEnd() { }
         public virtual void Killed() { }
         public virtual void WasKilled() { }
         public virtual void Update() { }
@@ -150,6 +161,31 @@ namespace TheSpaceRoles
             }
         }
 
+    }
+    [HarmonyPatch(typeof(MeetingHud),nameof(MeetingHud.CheckForEndVoting))]
+    public static class MeetingHudVote
+    {
+        public static void Postfix()
+        {
+            DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.MeetingEnd());
+
+        }
+    }
+    [HarmonyPatch(typeof(ActionButton),nameof(ActionButton.SetEnabled))]
+    public static class MeetingEndPlayerStart
+    {
+        public static void Postfix(ActionButton __instance)
+        {
+            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
+            {
+
+                if (DataBase.AllPlayerRoles != null && DataBase.AllPlayerRoles.ContainsKey(PlayerControl.LocalPlayer.PlayerId))
+                {
+                    DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.ResetStart());
+                }
+            }
+
+        }
     }
 
 }

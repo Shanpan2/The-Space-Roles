@@ -112,6 +112,14 @@ team.jackal.wincodition,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,
 ##Role,,,,,,,,,,,,,,,,,
+#template,,,,,,,,,,,,,,,,,
+role.template.name,,,,,,,,,,,,_,,,,,
+role.template.intro,,,,,,,,,,,,_,,,,,
+role.template.sintro,,,,,,,,,,,,_,,,,,
+role.template.description,,,,,,,,,,,,_,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
 #crewmate,,,,,,,,,,,,,,,,,
 role.crewmate.name,Crewmate,,,,,,,,,,,クルーメイト,,,,,市民
 role.crewmate.intro,Do the task and eject the {team.impostor.coloredname},,,,,,,,,,,タスクを行い、{team.impostor.coloredname}を追放しろ,,,,,仕事をこなし、{team.impostor.coloredname}を処刑せよ
@@ -137,13 +145,18 @@ role.mini.intro,Let's fight while protected,,,,,,,,,,,守られながら戦お�
 role.mini.sintro,Let's fight while protected,,,,,,,,,,,守られながら戦おう,,,,,守られながら戦おう
 role.mini.description,,,,,,,,,,,,,,,,,,
 #vampire,,,,,,,,,,,,,,,,,
-role.vampire.name,vampire,,,,,,,,,,,ヴァンパイア,,,,,吸血鬼
+role.vampire.name,Vampire,,,,,,,,,,,ヴァンパイア,,,,,吸血鬼
 role.vampire.intro,,,,,,,,,,,,あたしヴァンパイア,,,,,あたしヴァンパイア
 role.vampire.sintro,,,,,,,,,,,,あたしヴァンパイア,,,,,あたしヴァンパイア
 role.vampire.description,,,,,,,,,,,,ヴァンパイアは遅延キルをすることが出来る。\nプレイヤーを噛むと噛まれたプレイヤーは設定秒数後に死亡する。\nしかし、全てのプレイヤーが設置することの出来るニンニクの近くでは噛む事ができずに通常のキルとなってしまう。\n遅延キルを使って情報を混乱させろ。,,,,,
 ,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,
+#serialkiller,,,,,,,,,,,,,,,,,
+role.serialkiller.name,,,,,,,,,,,,シリアルキラー,,,,,
+role.serialkiller.intro,,,,,,,,,,,,_,,,,,
+role.serialkiller.sintro,,,,,,,,,,,,_,,,,,
+role.serialkiller.description,,,,,,,,,,,,_,,,,,
+role.serialkiller.timer_remain,Remain:{0}s,,,,,,,,,,,残り{0}秒,,,,,
+role.serialkiller.button,SerialkillerButton,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,

@@ -107,6 +107,8 @@ namespace TheSpaceRoles
         SheriffKill,
         SheriffSuicide,
         BittenByVampire,
+        SerialKillerKill,
+        SerialKillerSuicide
     }
 
 }

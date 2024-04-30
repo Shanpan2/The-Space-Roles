@@ -21,7 +21,7 @@ namespace TheSpaceRoles
 
             }
             SheriffKillButton = new CustomButton(
-                __instance,
+                __instance,"SheriffKillButton",
                 ButtonPos.Kill,
                 KeyCode.Q,
                 30,
