@@ -63,7 +63,7 @@ namespace TheSpaceRoles
 
             List<Func<string>> second = [];
 
-            second.Add(() => GetString("tsroption.selection.unlimited"));
+            second.Add(() => GetString("option.selection.unlimited"));
             if (include_off) second.Add(Sec(0));
 
             for (float i = 0; i <= sec; i += delta_sec)
@@ -82,16 +82,16 @@ namespace TheSpaceRoles
             if (TSROptions.Count != 0) return;
 
             TSROptions = [
-            Create(CustomOptionSelectorSetting.InformationEquipment, "use_records_admin", true),
-            Create(CustomOptionSelectorSetting.InformationEquipment, "limit_admin",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "use_records_admin", true),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_admin",GetSecondsIncludeUnlimited(180),Unlimited()),
 
-            Create(CustomOptionSelectorSetting.InformationEquipment, "limit_vital",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_vital",GetSecondsIncludeUnlimited(180),Unlimited()),
 
-            Create(CustomOptionSelectorSetting.InformationEquipment, "limit_camera",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_camera",GetSecondsIncludeUnlimited(180),Unlimited()),
 
-            Create(CustomOptionSelectorSetting.InformationEquipment, "limit_doorlog",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_doorlog",GetSecondsIncludeUnlimited(180),Unlimited()),
 
-            Create(CustomOptionSelectorSetting.InformationEquipment, "limit_binoculars",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_binoculars",GetSecondsIncludeUnlimited(180),Unlimited()),
 
             /*
             Create(CustomOptionSelectorSetting.General, "seee", GetSeconds(), ()=>"0"),

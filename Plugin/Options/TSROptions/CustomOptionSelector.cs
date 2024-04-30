@@ -12,16 +12,6 @@ namespace TheSpaceRoles
     public class CustomOptionSelector
     {
         public static CustomOptionSelectorSetting Select = CustomOptionSelectorSetting.General;
-        public static Transform GetTransformFromSetting(CustomSetting setting)
-        {
-            var csetting = HudManager.Instance.transform.FindChild("CustomSettings");
-            return setting switch
-            {
-                CustomSetting.TSRSettings => csetting.FindChild("TSRSettings"),
-                CustomSetting.RoleSettings => csetting.FindChild("CustomRoleSettings"),
-                _ => csetting.FindChild("TSRSettings"),
-            }; ;
-        }
         public static List<CustomOptionSelector> selectors = [];
         public CustomOptionSelectorSetting Setting;
         public GameObject @object;
@@ -71,7 +61,7 @@ namespace TheSpaceRoles
             var v = @object.transform.localScale;
             empty.transform.localRotation = Quaternion.identity;
             TextMeshPro text = new GameObject("Title_TMP").AddComponent<TextMeshPro>();
-            text.text = Translation.GetString("tsroptionselector." + setting.ToString());
+            text.text = Translation.GetString("optionselector." + setting.ToString());
             text.transform.SetParent(@object.transform);
             text.fontStyle = FontStyles.Bold;
             text.fontSizeMax = 3f;

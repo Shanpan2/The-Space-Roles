@@ -32,6 +32,9 @@ namespace TheSpaceRoles
         Prosecutor,//検察官?
         Pursuer,//追跡者?
         Thief,//泥棒?
+        Vampire,//ヴァンパイア
+
+
 
         //all or other(ここから　
         Mayor,//all
@@ -87,6 +90,7 @@ namespace TheSpaceRoles
             new Impostor(),
             new Sheriff(),
             new Mini(),
+            new Vampire(),
         ];
 
         public static List<CustomTeam> CustomTeamLink =

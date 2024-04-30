@@ -151,7 +151,7 @@ namespace TheSpaceRoles
                             }
                         }
                     }
-                    if(Teams.None == SelectedTeams)
+                    if (Teams.None == SelectedTeams)
                     {
                         foreach (var item in RoleOptionTeamRoles.RoleOptionsInTeam)
                         {
@@ -254,7 +254,6 @@ namespace TheSpaceRoles
         }
         public static void SetNums()
         {
-
             int i = 0;
             int team = 0;
             foreach (var roleop in RoleOptionTeamsHolder.TeamsHolder)

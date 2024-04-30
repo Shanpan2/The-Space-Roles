@@ -102,14 +102,14 @@ namespace TheSpaceRoles
         public static void Set(Teams teams)
         {
             var t = GetLink.GetCustomTeam(teams);
-            if (t == null)  Logger.Info("t is null");
+            if (t == null) Logger.Info("t is null");
             SetDescription(t.ColoredTeamName, t.ColoredIntro, t.Description);
         }
-        public static void Set(Teams teams,Roles roles)
+        public static void Set(Teams teams, Roles roles)
         {
             var r = GetLink.GetCustomRole(roles);
             var t = GetLink.GetCustomTeam(teams);
-            SetDescription(r.ColoredRoleName + t.ColoredShortTeamName, r.ColoredIntro, t.WinConditionTeam+"\n"+r.Description());
+            SetDescription(r.ColoredRoleName + t.ColoredShortTeamName, r.ColoredIntro, t.WinConditionTeam + "\n" + r.Description());
         }
         public static void SetDescription(string Title_, string Intro_, string Description_)
         {

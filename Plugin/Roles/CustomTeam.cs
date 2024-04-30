@@ -22,7 +22,7 @@ namespace TheSpaceRoles
         public string ColoredShortTeamName => ColoredText(Color, Translation.GetString("team." + Team.ToString() + ".sname"));
         public string ColoredIntro => ColoredText(Color, Translation.GetString("intro.cosmetic", [Translation.GetString("team." + Team.ToString() + ".intro")]));
         public string Description => Translation.GetString("team." + Team.ToString() + ".description");
-        public string WinConditionTeam=>Translation.GetString("wincondition.pre" ,[Translation.GetString("team." + Team.ToString() + ".wincondition")]);
+        public string WinConditionTeam => Translation.GetString("wincondition.pre", [Translation.GetString("team." + Team.ToString() + ".wincondition")]);
         public virtual void WinCheck() { }
     }
 }

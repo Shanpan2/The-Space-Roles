@@ -140,12 +140,12 @@ namespace TheSpaceRoles
             DropDownButton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
             DropDownButton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
             RoleOptionTeamsHolder.TeamsHolder.Add(this);
-            Logger.Info("Teams"+teams.ToString());
+            Logger.Info("Teams" + teams.ToString());
         }
         public void SetPos(float num)
         {
+            if (@object == null)return;
             this.num = num;
-
             @object.transform.localPosition = new(-2.0f, 2f - 0.36f * num, 0);
         }
         public void Dragging()

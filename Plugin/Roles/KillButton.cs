@@ -56,11 +56,11 @@ namespace TheSpaceRoles
             }
 
             return PlayerControlButtonControls.SetTarget(targetdistance, color, notIncludeTeamIds, [.. nIids], target, canBeTargetInVentPlayer);
-        }
+        }/*
         [HarmonyPatch(nameof(KillButton.CheckClick)), HarmonyPostfix]
         public static void Click(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
         {
-            RpcMurderPlayer.Murder(__instance.PlayerId, target.PlayerId, DeathReason.ImpostorKill);
-        }
+            CheckedMurderPlayer.RpcMurder(__instance, target, DeathReason.ImpostorKill);
+        }*/
     }
 }

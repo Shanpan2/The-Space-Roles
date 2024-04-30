@@ -136,10 +136,11 @@ namespace TheSpaceRoles
         }
 
     }
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Start))]
-    class GameSettingStart
+    [HarmonyPatch]
+    class GameSetting
     {
-        public static void Postfix(PlayerControl __instance)
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Start)),HarmonyPostfix]
+        public static void Start_Postfix(PlayerControl __instance)
         {
 
             var cSettings = new GameObject("CustomSettings");
@@ -166,6 +167,10 @@ namespace TheSpaceRoles
             added.transform.SetParent(customroleSettings.transform);
             added.transform.localPosition = Vector3.zero;
             added.active = true;
+            var n = new GameObject("E");
+            n.transform.SetParent(customroleSettings.transform);
+            n.transform.localPosition = Vector3.zero;
+            n.active = true;
             CustomOptionSelectorHolder.CreateSelector();
             CustomOptionsHolder.CreateCustomOptions();
             CustomOptionsHolder.AllCheck();
@@ -174,6 +179,16 @@ namespace TheSpaceRoles
             RoleOptionTeamsHolder.Create();
         }
 
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame)),HarmonyPostfix]
+        public static void End_Postfix(PlayerControl __instance)
+        {
+            CustomOptionSelector.selectors = [];
+            CustomOptionsHolder.Options.Do(x => x = []); 
+            RoleOptionsHolder.roleOptions=[];
+            RoleOptionTeamsHolder.TeamsHolder = [];
+            RoleOptionTeamRoles.RoleOptionsInTeam = [];
+
+        }
 
     }
 
@@ -185,13 +200,23 @@ namespace TheSpaceRoles
     public class CustomOption
     {
         public static int preset = 0;
-        public string GetName() => Translation.GetString("tsroption." + name);
-        //public string GetSelectionName() => Translation.GetString("tsroption.selection.sec", [selections[selection].ToString()]);
+        public string GetName() => Translation.GetString("option." + name);
+        //public string GetSelectionName() => Translation.GetString("option.selection.sec", [selections[selection].ToString()]);
         public string GetSelectionName()
         {
 
             return selections[selection]();
 
+        }
+        public static Transform GetTransformFromSetting(CustomSetting setting)
+        {
+            var csetting = HudManager.Instance.transform.FindChild("CustomSettings");
+            return setting switch
+            {
+                CustomSetting.TSRSettings => csetting.FindChild("TSRSettings"),
+                CustomSetting.RoleSettings => csetting.FindChild("CustomRoleSettings"),
+                _ => csetting.FindChild("TSRSettings"),
+            }; ;
         }
         public string name;
         public string parentId;
@@ -204,15 +229,25 @@ namespace TheSpaceRoles
         public Action onChange;
         public OptionBehaviour optionBehaviour;
         public CustomOptionSelectorSetting obj_parent;
+        public CustomSetting CustomSetting;
         public TextMeshPro Title_TMP;
         public TextMeshPro Value_TMP;
         public SpriteRenderer right;
         public SpriteRenderer left;
-        public CustomOption(CustomOptionSelectorSetting parent, string name,
-            Func<string>[] selections, Func<string> dafaultValue, string parentId = null, Func<int, bool> func = null, Action onChange = null
+        public Roles role;
+        public Teams team;
+        public CustomOption(CustomSetting customSetting, string name,
+            Func<string>[] selections, Func<string> dafaultValue, string parentId = null, Func<int, bool> func = null, Action onChange = null, CustomOptionSelectorSetting? parent = null, Teams team = Teams.None, Roles role = Roles.None
             )
         {
-            this.obj_parent = parent;
+            this.CustomSetting = customSetting;
+            this.role = role;
+            this.team = team;
+            if (parent != null)
+            {
+
+                this.obj_parent = (CustomOptionSelectorSetting)parent;
+            }
             this.name = name;
             this.func = func;
             this.onChange = onChange;
@@ -228,7 +263,7 @@ namespace TheSpaceRoles
             renderer.sprite = Sprites.GetSpriteFromResources("ui.banner.png", 200);
             renderer.color = Helper.ColorFromColorcode("#333333");
             @object.name = name;
-            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("TSRSettings").FindChild(parent.ToString()).FindChild("E"));
+            @object.transform.SetParent(GetTransformFromSetting(customSetting).FindChild(parent.ToString()).FindChild("E"));
             @object.active = true;
             @object.layer = HudManager.Instance.gameObject.layer;
             @object.transform.localPosition = Vector3.zero;
@@ -270,7 +305,7 @@ namespace TheSpaceRoles
             Value_TMP.rectTransform.sizeDelta = new Vector2(1, 0.5f);
 
 
-            right = new GameObject().AddComponent<SpriteRenderer>();
+            right = new GameObject("right").AddComponent<SpriteRenderer>();
             right.sprite = Sprites.GetSpriteFromResources("ui.double_right.png", 80);
             right.gameObject.layer = HudManager.Instance.gameObject.layer;
             right.transform.SetParent(@object.transform);
@@ -293,7 +328,7 @@ namespace TheSpaceRoles
             rbutton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
 
 
-            left = new GameObject().AddComponent<SpriteRenderer>();
+            left = new GameObject("left").AddComponent<SpriteRenderer>();
             left.sprite = Sprites.GetSpriteFromResources("ui.double_left.png", 80);
             left.gameObject.layer = HudManager.Instance.gameObject.layer;
             left.transform.SetParent(@object.transform);
@@ -318,7 +353,7 @@ namespace TheSpaceRoles
         }
         public static Func<string> GetOptionSelection(string str, string[] strs = null)
         {
-            return () => Translation.GetString("tsroption.selection." + str, strs);
+            return () => Translation.GetString("option.selection." + str, strs);
         }
 
         public static Func<string> On() => GetOptionSelection("on");
@@ -332,15 +367,24 @@ namespace TheSpaceRoles
         public static Func<int, bool> funcOff = x => x == 0;
 
 
-        public static CustomOption Create(CustomOptionSelectorSetting parent, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static CustomOption TSRCreate(CustomOptionSelectorSetting parent, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(parent, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange);
+            return new CustomOption(CustomSetting.TSRSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, parent);
         }
-        public static CustomOption Create(CustomOptionSelectorSetting parent, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static CustomOption TSRCreate(CustomOptionSelectorSetting parent, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(parent, name, selections, selection, parentId, func, onChange);
+            return new CustomOption(CustomSetting.TSRSettings, name, selections, selection, parentId, func, onChange, parent);
         }
 
+
+        public static CustomOption RoleCreate(Teams teams, Roles roles, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        {
+            return new CustomOption(CustomSetting.RoleSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, role: roles, team: teams);
+        }
+        public static CustomOption RoleCreate(Teams teams, Roles roles, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        {
+            return new CustomOption(CustomSetting.RoleSettings, name, selections, selection, parentId, func, onChange, role: roles, team: teams);
+        }
 
 
 

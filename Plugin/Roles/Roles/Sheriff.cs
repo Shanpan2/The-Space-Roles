@@ -33,13 +33,13 @@ namespace TheSpaceRoles
 
                     if (DataBase.AllPlayerTeams[pc.PlayerId] != Teams.Crewmate)
                     {
-                        RpcMurderPlayer.RpcMurder(PlayerControl.LocalPlayer, pc, DeathReason.SheriffKill);
+                        CheckedMurderPlayer.RpcMurder(PlayerControl.LocalPlayer, pc, DeathReason.SheriffKill);
 
 
                     }
                     else
                     {
-                        RpcMurderPlayer.RpcMurder(pc, PlayerControl.LocalPlayer, DeathReason.SheriffSuicide);
+                        UnCheckedMurderPlayer.RpcMurder(pc, PlayerControl.LocalPlayer, DeathReason.SheriffSuicide);
                     }
                 },
                 () => SheriffKillButton.Timer = SheriffKillButton.maxTimer,

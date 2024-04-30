@@ -1,11 +1,8 @@
-﻿using HarmonyLib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using static TheSpaceRoles.Translation;
-using Enum = System.Enum;
 using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
@@ -16,13 +13,19 @@ namespace TheSpaceRoles
         public static List<RoleOptionTeamRoles> RoleOptionsInTeam = [];
         public GameObject @object;
         public TextMeshPro Title_TMP;
+        public TextMeshPro Value_TMP;
         public bool Virtual;
         public Roles role;
         public Teams team;
+        public int memberCount = 1;
         public int num = 0;
         public PassiveButton AddedRoleButton;
+        public PassiveButton rbutton;
+        public PassiveButton lbutton;
+
         public RoleOptionTeamRoles(Teams teams, Roles role)
-        {       this.role = role;
+        {
+            this.role = role;
             this.team = teams;
             @object = new(team.ToString() + "_" + role.ToString());
             @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings").FindChild("AddedRoles"));
@@ -52,19 +55,41 @@ namespace TheSpaceRoles
             Title_TMP.fontStyle = FontStyles.Bold;
             Title_TMP.text = GetLink.GetCustomRole(role).RoleName;
             Title_TMP.color = GetLink.GetCustomRole(role).Color;
-            Title_TMP.fontSize = Title_TMP.fontSizeMax = 2f;
-            Title_TMP.fontSizeMin = 1f;
+            Title_TMP.fontSize = Title_TMP.fontSizeMax = 1.8f;
+            Title_TMP.fontSizeMin = 0.4f;
             Title_TMP.alignment = TextAlignmentOptions.Center;
             Title_TMP.enableWordWrapping = false;
             Title_TMP.outlineWidth = 0.8f;
             Title_TMP.autoSizeTextContainer = false;
             Title_TMP.enableAutoSizing = true;
-            Title_TMP.transform.localPosition = new Vector3(0f, 0f, -1f);
+            Title_TMP.transform.localPosition = new Vector3(-0.2f, 0f, -1f);
             Title_TMP.transform.localScale = Vector3.one;
             Title_TMP.gameObject.layer = HudManager.Instance.gameObject.layer;
             Title_TMP.m_sharedMaterial = Data.textMaterial;
             Title_TMP.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            Title_TMP.rectTransform.sizeDelta = new Vector2(2.4f, 0.5f);
+            Title_TMP.rectTransform.sizeDelta = new Vector2(1.8f, 0.5f);
+
+
+
+            Value_TMP = new GameObject("Value_TMP").AddComponent<TextMeshPro>();
+            Value_TMP.transform.SetParent(@object.transform);
+            Value_TMP.fontStyle = FontStyles.Bold;
+            Value_TMP.color = GetLink.GetCustomRole(role).Color;
+            Value_TMP.fontSize = Value_TMP.fontSizeMax = 1.8f;
+            Value_TMP.fontSizeMin = 0.4f;
+            Value_TMP.alignment = TextAlignmentOptions.Center;
+            Value_TMP.enableWordWrapping = false;
+            Value_TMP.outlineWidth = 0.8f;
+            Value_TMP.autoSizeTextContainer = false;
+            Value_TMP.transform.localPosition = new Vector3(0.6f, 0f, -2f);
+            Value_TMP.transform.localScale = Vector3.one;
+            Value_TMP.gameObject.layer = HudManager.Instance.gameObject.layer;
+            Value_TMP.m_sharedMaterial = Data.textMaterial;
+            Value_TMP.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            Value_TMP.rectTransform.sizeDelta = new Vector2(1f, 0.5f);
+
+            SetCount(1);
+
             var box = @object.AddComponent<BoxCollider2D>();
             box.size = renderer.bounds.size;
             AddedRoleButton = @object.AddComponent<PassiveButton>();
@@ -76,23 +101,87 @@ namespace TheSpaceRoles
             AddedRoleButton.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             AddedRoleButton.OnClick.AddListener((System.Action)(() =>
             {
-                RoleOptionsDescription.Set(teams,this.role);
+                RoleOptionsDescription.Set(teams, this.role);
 
             }));
 
             AddedRoleButton.OnMouseOver.AddListener((System.Action)(() =>
             {
-                    renderer.color = Helper.ColorEditHSV(GetLink.ColorFromTeams(team), s: -0.2f);
-                
+                renderer.color = Helper.ColorEditHSV(GetLink.ColorFromTeams(team), s: -0.2f);
+
             }));
             AddedRoleButton.OnMouseOut.AddListener((System.Action)(() =>
             {
-                    renderer.color = GetLink.ColorFromTeams(team);
-                
+                renderer.color = GetLink.ColorFromTeams(team);
+
             }));
             AddedRoleButton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
             AddedRoleButton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
 
+
+
+            var right = new GameObject("right").AddComponent<SpriteRenderer>();
+            right.sprite = Sprites.GetSpriteFromResources("ui.double_right.png", 80);
+            right.gameObject.layer = HudManager.Instance.gameObject.layer;
+            right.transform.SetParent(@object.transform);
+            right.transform.localScale = Vector3.one;
+            right.transform.localPosition = new Vector3(1.1f, 0, -1);
+            right.color = Color.white;
+            right.material = Data.textMaterial;
+            right.gameObject.AddComponent<BoxCollider2D>().size = new Vector2(0.3f, 0.3f);
+            rbutton = right.gameObject.AddComponent<PassiveButton>();
+            rbutton.OnClick = new();
+            rbutton.OnMouseOut = new UnityEvent();
+            rbutton.OnMouseOver = new UnityEvent();
+            rbutton._CachedZ_k__BackingField = 0.1f;
+            rbutton.CachedZ = 0.1f;
+            rbutton.Colliders = new[] { right.GetComponent<BoxCollider2D>() };
+            rbutton.OnClick.AddListener((System.Action)(() => { SetCount(memberCount + 1); }));
+            rbutton.OnMouseOver.AddListener((System.Action)(() => { right.color = Palette.AcceptedGreen; }));
+            rbutton.OnMouseOut.AddListener((System.Action)(() => { right.color = Color.white; }));
+            rbutton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
+            rbutton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
+
+
+            var left = new GameObject("left").AddComponent<SpriteRenderer>();
+            left.sprite = Sprites.GetSpriteFromResources("ui.double_left.png", 80);
+            left.gameObject.layer = HudManager.Instance.gameObject.layer;
+            left.transform.SetParent(@object.transform);
+            left.transform.localScale = Vector3.one;
+            left.color = Color.white;
+            left.transform.localPosition = new Vector3(-1.1f, 0, -1);
+            left.material = Data.textMaterial;
+            left.gameObject.AddComponent<BoxCollider2D>().size = new Vector2(0.3f, 0.3f);
+            lbutton = left.gameObject.AddComponent<PassiveButton>();
+            lbutton.OnClick = new();
+            lbutton.OnMouseOut = new UnityEvent();
+            lbutton.OnMouseOver = new UnityEvent();
+            lbutton._CachedZ_k__BackingField = 0.1f;
+            lbutton.CachedZ = 0.1f;
+            lbutton.Colliders = new[] { left.GetComponent<BoxCollider2D>() };
+            lbutton.OnClick.AddListener((UnityAction)(() => { SetCount(memberCount - 1); }));
+            lbutton.OnMouseOver.AddListener((UnityAction)(() => { left.color = Palette.AcceptedGreen; }));
+            lbutton.OnMouseOut.AddListener((UnityAction)(() => { left.color = Color.white; }));
+            lbutton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
+            lbutton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
+
+
+
+        }
+        public void SetCount(int count)
+        {
+            if (count > 0)
+            {
+                memberCount = count;
+                Value_TMP.text = "x" + memberCount;
+                Value_TMP.m_sharedMaterial = Data.textMaterial;
+                Value_TMP.material = Data.textMaterial;
+                Value_TMP.fontMaterial = Data.textMaterial;
+            }
+            else
+            {
+                Remove();
+            }
         }
         public void SetPos(float num)
         {

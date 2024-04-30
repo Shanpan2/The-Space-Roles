@@ -34,8 +34,11 @@ namespace TheSpaceRoles
                         int t2 = reader.ReadInt32();
                         GameStarter.SetTeam(t1, t2);
                         break;
-                    case Rpcs.RpcMurderPlayer:
-                        RpcMurderPlayer.Murder(reader.ReadInt32(), reader.ReadInt32(), (DeathReason)reader.ReadInt32());
+                    case Rpcs.CheckedMurderPlayer:
+                        CheckedMurderPlayer.Murder(reader.ReadInt32(), reader.ReadInt32(), (DeathReason)reader.ReadInt32());
+                        break;
+                    case Rpcs.UnCheckedMurderPlayer:
+                        UnCheckedMurderPlayer.Murder(reader.ReadInt32(), reader.ReadInt32(), (DeathReason)reader.ReadInt32());
                         break;
                     case Rpcs.DataBaseReset:
 
@@ -93,7 +96,8 @@ namespace TheSpaceRoles
         GameEnd,
         ShareOptions,
         UseAbility,
-        RpcMurderPlayer,//A kill B : A/B/Reasons
+        CheckedMurderPlayer,//A kill B : A/B/Reasons
+        UnCheckedMurderPlayer,//A kill B but not killanimation is only B : A/B/Reasons
     }
     public enum DeathReason : int
     {
@@ -102,6 +106,7 @@ namespace TheSpaceRoles
         ImpostorKill,
         SheriffKill,
         SheriffSuicide,
+        BittenByVampire,
     }
 
 }

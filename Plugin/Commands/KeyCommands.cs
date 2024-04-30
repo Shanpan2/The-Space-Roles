@@ -2,6 +2,7 @@
 using InnerNet;
 using System.Collections.Generic;
 using UnityEngine;
+using Hazel;
 
 namespace TheSpaceRoles.Plugin
 {
@@ -21,19 +22,26 @@ namespace TheSpaceRoles.Plugin
         public static int undocount = 1;
 
         public static List<string> chattexts = new List<string>();
+        [HarmonyPatch(typeof(PlayerControl),nameof(PlayerControl.FixedUpdate))]
+        [HarmonyPostfix]
+        public static void player_Postfix() 
+        {
+
+            //Debug
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                Logger.Info("N");
+                KillAnimationPatch.AnimCancel = true;
+                HudManager.Instance.KillOverlay.ShowKillAnimation(PlayerControl.AllPlayerControls[Helper.Random(0, PlayerControl.AllPlayerControls.Count-1)].Data, PlayerControl.LocalPlayer.Data);
+            }
+        }
+
+
 
         [HarmonyPatch(typeof(GameManager), "FixedUpdate")]
         [HarmonyPostfix]
         public static void Postfix(GameManager __instance)
         {
-            //IL_0013: Unknown result type (might be due to invalid IL or missing references)
-            //IL_0019: Invalid comparison between Unknown and I4
-            //IL_00b6: Unknown result type (might be due to invalid IL or missing references)
-            //IL_00bc: Invalid comparison between Unknown and I4
-            //IL_00c3: Unknown result type (might be due to invalid IL or missing references)
-            //IL_00c9: Invalid comparison between Unknown and I4
-            //IL_012a: Unknown result type (might be due to invalid IL or missing references)
-            //IL_0107: Unknown result type (might be due to invalid IL or missing references)
             try
             {
                 if (((InnerNetClient)AmongUsClient.Instance).AmHost && (int)((InnerNetClient)AmongUsClient.Instance).GameState == 2)

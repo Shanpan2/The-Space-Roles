@@ -47,7 +47,9 @@ namespace TheSpaceRoles
         public KeyCode keyCode;
         public Action OnClick;
         public Action OnMeetingEnds;
-        public Action OnEffectEnds;
+        public Action OnEffectStart;
+        public Action OnEffectUpdate;
+        public Action OnEffectEnd;
         private static readonly int Desat = Shader.PropertyToID("_Desat");
 
 
@@ -65,8 +67,9 @@ namespace TheSpaceRoles
             bool HasEffect,
             bool canEffectCancel = false,
             float EffectDuration = 0,
-            Action OnEffectStarts = null,
-            Action OnEffectEnds = null
+            Action OnEffectStart = null,
+            Action OnEffectUpdate = null,
+            Action OnEffectEnd = null
             )
         {
             this.hudManager = hudManager;
@@ -82,6 +85,9 @@ namespace TheSpaceRoles
             this.canEffectCancel = canEffectCancel;
             this.maxEffectTimer = EffectDuration;
             this.atFirsttime = true;
+            this.OnEffectStart = OnEffectStart;
+            this.OnEffectUpdate = OnEffectUpdate;
+            this.OnEffectEnd = OnEffectEnd;
             actionButton = Instantiate(hudManager.KillButton, hudManager.KillButton.transform.parent);
             actionButton.buttonLabelText.text = buttonText;
             actionButton.graphic.sprite = sprite;
@@ -129,26 +135,38 @@ namespace TheSpaceRoles
                 Timer = 0;
                 if (hasEffect && isEffectActive)
                 {
-                    isEffectActive = false;
                     Timer = maxTimer;
+                    isEffectActive = false;
                     actionButton.cooldownTimerText.color = Palette.EnabledColor;
-                    OnEffectEnds();
+
+                    this.OnEffectEnd?.Invoke();
                 }
 
             }
             if (Timer <= 0) this.actionButton.cooldownTimerText.text = "";
             var canuse = CanUse();
-            if (canuse != -1)
+            if (!isEffectActive)
             {
-                actionButton.graphic.color = actionButton.buttonLabelText.color = Palette.EnabledColor;
-                actionButton.graphic.material.SetFloat(Desat, 0f);
+
+                if (canuse != -1)
+                {
+                    actionButton.graphic.color = actionButton.buttonLabelText.color = Palette.EnabledColor;
+                    actionButton.graphic.material.SetFloat(Desat, 0f);
+                }
+                else
+                {
+
+                    actionButton.graphic.color = actionButton.buttonLabelText.color = Palette.DisabledClear;
+                    actionButton.graphic.material.SetFloat(Desat, 1f);
+                }
+
             }
             else
             {
 
-                actionButton.graphic.color = actionButton.buttonLabelText.color = Palette.DisabledClear;
-                actionButton.graphic.material.SetFloat(Desat, 1f);
+                this.OnEffectUpdate?.Invoke();
             }
+
 
             if (atFirsttime == false)
             {
@@ -192,6 +210,9 @@ namespace TheSpaceRoles
                     isEffectActive = true;
                     Timer = maxEffectTimer;
                     OnClick();
+                    actionButton.graphic.color = actionButton.buttonLabelText.color = Palette.AcceptedGreen;
+                    actionButton.cooldownTimerText.color = Palette.AcceptedGreen;
+                    actionButton.graphic.material.SetFloat(Desat, 0f);
                 }
                 else
                 {
@@ -214,7 +235,8 @@ namespace TheSpaceRoles
             if (IsDead) return;
             SetActive(true);
             atFirsttime = true;
-            OnMeetingEnds();
+
+            OnMeetingEnds?.Invoke();
         }
     }
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
