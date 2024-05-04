@@ -81,7 +81,6 @@ namespace TheSpaceRoles
                 }
             }
 
-
         }
         public static void SendRpcSetRole(Roles roles, int[] players)
         {
@@ -109,14 +108,16 @@ namespace TheSpaceRoles
             {
                 var list = DataBase.AllPlayerRoles[playerId].ToList();
                 var p = GetLink.GetCustomRole((Roles)roleId);
-                p.ReSet(playerId);
+                p.ReSet(playerId, DataBase.AllPlayerTeams[playerId]);
+                p.Team.Role=p;
                 list.Add(p);
                 DataBase.AllPlayerRoles[playerId] = [.. list];
             }
             else
             {
                 var p = GetLink.GetCustomRole((Roles)roleId);
-                p.ReSet(playerId);
+                p.ReSet(playerId, DataBase.AllPlayerTeams[playerId]);
+                p.Team.Role = p;
                 DataBase.AllPlayerRoles.Add(playerId, [p]);
 
             }

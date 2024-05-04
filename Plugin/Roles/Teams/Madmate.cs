@@ -1,14 +1,15 @@
 ﻿using System.Linq;
+using UnityEngine.UIElements;
 
 namespace TheSpaceRoles
 {
-    public class ImpostorTeam : CustomTeam
+    public class MadmateTeam : CustomTeam
     {
-        public ImpostorTeam()
+        public MadmateTeam()
         {
-            Team = Teams.Impostor;
+            Team = Teams.Madmate;
             Color = Palette.ImpostorRed;
-            HasKillButton = true;
+            HasKillButton = false;
             CanRepairSabotage = true;
             CanUseAdmin = true;
             CanUseBinoculars = true;
@@ -18,14 +19,14 @@ namespace TheSpaceRoles
             CanUseVital = true;
             HasTask = false;
         }
+
         public override bool WinCheck()
-        { 
-            var v = DataBase.GetPlayerCountInTeam();
-            if (v[Teams.Impostor] >= v[Teams.Crewmate] && v[Teams.Jackal] == 0)
-            {
-                return true;
-            }
+        {
             return false;
+        }
+        public override bool AdditionalWinCheck(Teams winteam)
+        {
+            return winteam==Teams.Impostor;
         }
     }
 }

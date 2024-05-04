@@ -24,6 +24,7 @@ namespace TheSpaceRoles
         //default
         Crewmate,
         Impostor,
+        MadMate,
         Jackal,
         Jester,
         Arsonist,
@@ -77,14 +78,17 @@ namespace TheSpaceRoles
         Pursuer,//追跡者?
         Thief//泥棒?
     }
-
+    public enum CustomGameOverReason:int
+    {
+        GhostTown,
+        Jester,
+    }
 
     /// <summary>
     /// Linkだよ!!
     /// </summary>
     public static class GetLink
     {
-
         public static List<CustomRole> CustomRoleLink =
         [
             new Crewmate(),
@@ -93,6 +97,14 @@ namespace TheSpaceRoles
             new Mini(),
             new Vampire(),
             new SerialKiller(),
+            new Madmate(),
+        ];
+
+        public static List<CustomRole> CustomRoleNormalLink =
+        [
+            new Crewmate(),
+            new Impostor(),
+            new Madmate(),
         ];
 
         public static List<CustomTeam> CustomTeamLink =
@@ -101,13 +113,10 @@ namespace TheSpaceRoles
             new ImpostorTeam(),
             new JackalTeam(),
             new JesterTeam(),
+            new MadmateTeam(),
+           
         ];
 
-        public static List<CustomRole> CustomRoleNormalLink =
-        [
-            new Crewmate(),
-            new Impostor(),
-        ];
         /*public static Dictionary<Teams, Color> ColorFromTeams = new()
         {
             {Teams.Crewmate,Palette.CrewmateBlue},
@@ -118,6 +127,7 @@ namespace TheSpaceRoles
         };*/
         public static Color ColorFromTeams(Teams team)
         {
+
             try
             {
 

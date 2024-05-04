@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Hazel;
+using System.Collections.Generic;
 
 namespace TheSpaceRoles
 {
@@ -50,6 +51,19 @@ namespace TheSpaceRoles
                     case Rpcs.ShareOptions:
                         CustomOption.GetOptionSelections(reader);
                         break;
+                    case Rpcs.GameEnd:
+                        //int team = reader.ReadInt32();
+                        //int i = reader.ReadInt32();
+                        //List<Teams> ints = new List<Teams>();
+                        //for (int j = 0; j < i; j++)
+                        //{
+                        //     ints.Add((Teams)reader.ReadInt32());
+                        //}
+
+
+
+                        //GameEnd.CustomEndGame((Teams)team, [..ints]);
+                        break;
                     case Rpcs.UseAbility:
                         int useAbilityPlayerId = reader.ReadInt32();
                         int useAbilityRoleId = reader.ReadInt32();
@@ -98,6 +112,7 @@ namespace TheSpaceRoles
         UseAbility,
         CheckedMurderPlayer,//A kill B : A/B/Reasons
         UnCheckedMurderPlayer,//A kill B but not killanimation is only B : A/B/Reasons
+        
     }
     public enum DeathReason : int
     {

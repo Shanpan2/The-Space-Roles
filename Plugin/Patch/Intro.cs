@@ -15,7 +15,7 @@ namespace TheSpaceRoles
             {
 
                 __instance.TeamTitle.color = TeamColor();
-                __instance.TeamTitle.text = Translation.GetString($"team.{DataBase.AllPlayerTeams[PlayerControl.LocalPlayer.PlayerId]}.name");
+                __instance.TeamTitle.text = Translation.GetString($"team.{DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId][0].Team.Team}.name");
 
             })));
         }
@@ -25,7 +25,7 @@ namespace TheSpaceRoles
 
         }
 
-        public static Color TeamColor() => GetLink.ColorFromTeams(DataBase.AllPlayerTeams[PlayerControl.LocalPlayer.PlayerId]);
+        public static Color TeamColor() => GetLink.ColorFromTeams(DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId][0].Team.Team);
     }
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
     public static class IntroShowRole
