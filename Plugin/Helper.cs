@@ -12,6 +12,57 @@ namespace TheSpaceRoles
 {
     public static class Helper
     {
+        public static bool InArea(Vector3 Position,Vector3 startPos,Vector3 endPos)
+        {
+            if (startPos.x > endPos.x)
+            {
+                if(startPos.x > Position.x&& Position.x > endPos.x)
+                {
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+
+                if (startPos.x < Position.x && Position.x < endPos.x)
+                {
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if (startPos.y > endPos.y)
+            {
+                if (startPos.y > Position.y && Position.y > endPos.y)
+                {
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+
+                if (startPos.y < Position.y && Position.y < endPos.y)
+                {
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public static UnityEngine.Color ColorFromColorcode(string colorcode)
         {
 

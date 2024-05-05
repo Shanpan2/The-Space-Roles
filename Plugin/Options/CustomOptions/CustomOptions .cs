@@ -175,7 +175,7 @@ namespace TheSpaceRoles
             CustomOptionsHolder.CreateCustomOptions();
             CustomOptionsHolder.AllCheck();
             RoleOptionsDescription.StartExplain();
-            RoleOptionsHolder.RoleOptionsCreate();
+            RoleOptionsHolder.RoleOptionsCreate(ref v,ref customroleSettings);
             RoleOptionTeamsHolder.Create();
         }
 
