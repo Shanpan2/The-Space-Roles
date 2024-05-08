@@ -28,7 +28,7 @@ namespace TheSpaceRoles
             this.role = role;
             this.team = teams;
             @object = new(team.ToString() + "_" + role.ToString());
-            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings").FindChild("AddedRoles"));
+            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings").FindChild("Teams"));
             //var op = @object.AddComponent<RoleOptionBehavior>();
             //op.Set(role, team);
             //optionBehavior.Set(teams: team);

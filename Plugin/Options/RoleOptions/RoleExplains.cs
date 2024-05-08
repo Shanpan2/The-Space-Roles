@@ -33,7 +33,7 @@ namespace TheSpaceRoles
             if (Description != null) return;
 
             GameObject g = new GameObject("Description");
-            g.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings"));
+            g.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings").FindChild("Description"));
             g.transform.localPosition = Vector3.zero;
 
 
@@ -42,7 +42,7 @@ namespace TheSpaceRoles
             Title.text = "";
             Title.fontStyle = FontStyles.Bold;
             Title.transform.SetParent(g.transform);
-            Title.transform.localPosition = new Vector3(2.4f, 1.9f, 0);
+            Title.transform.localPosition = new Vector3(2.3f, 1.9f, 0);
             Title.m_sharedMaterial = Data.textMaterial;
             Title.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Title.rectTransform.sizeDelta = new Vector2(3.0f, 2.0f);
@@ -59,7 +59,7 @@ namespace TheSpaceRoles
             Intro.text = "";
             Intro.fontStyle = FontStyles.Bold;
             Intro.transform.SetParent(g.transform);
-            Intro.transform.localPosition = new Vector3(2.4f, 1.5f, 0);
+            Intro.transform.localPosition = new Vector3(2.3f, 1.5f, 0);
             Intro.m_sharedMaterial = Data.textMaterial;
             Intro.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Intro.rectTransform.sizeDelta = new Vector2(2.5f, 0.3f);
@@ -82,7 +82,7 @@ namespace TheSpaceRoles
             Description.text = Translation.GetString("canvisibleteam", [r]);
             //Description.fontStyle = FontStyles.Bold;
             Description.transform.SetParent(g.transform);
-            Description.transform.localPosition = new Vector3(2.4f, 1.2f, 0);
+            Description.transform.localPosition = new Vector3(2.3f, 1.2f, 0);
             Description.m_sharedMaterial = Data.textMaterial;
             Description.rectTransform.pivot = new Vector2(0.5f, 1f);
             Description.rectTransform.sizeDelta = new Vector2(5f, 5f);

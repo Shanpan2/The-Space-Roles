@@ -146,27 +146,39 @@ namespace TheSpaceRoles
             var cSettings = new GameObject("CustomSettings");
             cSettings.transform.SetParent(HudManager.Instance.transform);
             cSettings.active = true;
-            cSettings.transform.localPosition = new(0, 0, -160);
+            cSettings.transform.localPosition = new(0, 0, -70);
             var tsrSettings = new GameObject("TSRSettings");
             tsrSettings.transform.SetParent(cSettings.transform);
             tsrSettings.active = false;
+            var selector = new GameObject("Selector");
+            selector.transform.SetParent(tsrSettings.transform);
+            selector.transform.localPosition = Vector3.zero;
+            selector.active = true;
+            var opt = new GameObject("Option");
+            opt.transform.SetParent(tsrSettings.transform);
+            opt.transform.localPosition = Vector3.zero;
+            opt.active = true;
             tsrSettings.transform.localPosition = Vector3.zero;
             var customroleSettings = new GameObject("CustomRoleSettings");
             customroleSettings.transform.SetParent(cSettings.transform);
             customroleSettings.active = false;
             customroleSettings.transform.localPosition = Vector3.zero;
-            var v = new GameObject("Roles");
-            v.transform.SetParent(customroleSettings.transform);
-            v.transform.localPosition = Vector3.zero;
-            v.active = true;
-            var b = new GameObject("Teams");
-            b.transform.SetParent(customroleSettings.transform);
-            b.transform.localPosition = Vector3.zero;
-            b.active = true;
+            var roles = new GameObject("Roles");
+            roles.transform.SetParent(customroleSettings.transform);
+            roles.transform.localPosition = Vector3.zero;
+            roles.active = true;
+            var teams = new GameObject("Teams");
+            teams.transform.SetParent(customroleSettings.transform);
+            teams.transform.localPosition = Vector3.zero;
+            teams.active = true;
             var added = new GameObject("AddedRoles");
             added.transform.SetParent(customroleSettings.transform);
             added.transform.localPosition = Vector3.zero;
             added.active = true;
+            var desc = new GameObject("Description");
+            desc.transform.SetParent(customroleSettings.transform);
+            desc.transform.localPosition = Vector3.zero;
+            desc.active = true;
             var n = new GameObject("E");
             n.transform.SetParent(customroleSettings.transform);
             n.transform.localPosition = Vector3.zero;
@@ -175,10 +187,20 @@ namespace TheSpaceRoles
             CustomOptionsHolder.CreateCustomOptions();
             CustomOptionsHolder.AllCheck();
             RoleOptionsDescription.StartExplain();
-            RoleOptionsHolder.RoleOptionsCreate(ref v,ref customroleSettings);
+            RoleOptionsHolder.RoleOptionsCreate();
             RoleOptionTeamsHolder.Create();
-        }
 
+            _ = new ScrollerP("OptSel_Scroller", ref selector, ref tsrSettings, new(-3, 5, 0), new(-5, -5, 0), new(-4.5f, -0.5f, 0), CustomOptionSelector.selectors.Count * 1f);
+
+            _ = new ScrollerP("Role_Scroller", ref roles, ref customroleSettings, new(-5, 5, 0), new(-7, -5, 0), new(-3.45f, -0.5f, 0),RoleOptionsHolder.roleOptions.Count * 0.36f);
+            _ = new ScrollerP("Team_Scroller", ref teams, ref customroleSettings, new(-3, 5, 0), new(-5, -5, 0), new(-0.5f, -0.5f, 0), RoleOptionTeamsHolder.TeamsHolder.Count * 0.36f);
+            
+            _ = new ScrollerP("Description_Scroller", ref desc, ref customroleSettings, new(-3, 5, 0), new(-5, -5, 0), new(5f, -0.5f, 0),CustomOptionsHolder.RoleOptions.Where(x => x.role == RoleOptionOptions.nowRole && x.team == RoleOptionOptions.nowTeam).ToList().Count  * 0.36f+1.8f);
+
+            optsc = new ScrollerP("Opt_Scroller", ref opt, ref tsrSettings, new(1, 5, 0), new(5, -5, 0), new(0f, -0.5f, 0), ( CustomOptionsHolder.TSROptions.Where(x => x.obj_parent == CustomOptionSelector.Select).Count() ) * 0.38f+0);
+
+        }
+        public static ScrollerP optsc;
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame)),HarmonyPostfix]
         public static void End_Postfix(PlayerControl __instance)
         {
@@ -213,7 +235,7 @@ namespace TheSpaceRoles
             var csetting = HudManager.Instance.transform.FindChild("CustomSettings");
             return setting switch
             {
-                CustomSetting.TSRSettings => csetting.FindChild("TSRSettings").FindChild(parent.ToString()).FindChild("E"),
+                CustomSetting.TSRSettings => csetting.FindChild("TSRSettings").FindChild("Option"),
                 CustomSetting.RoleSettings => csetting.FindChild("CustomRoleSettings").FindChild("E"),
                 _ => csetting.FindChild("CustomRoleSettings"),
             }; ;
@@ -428,7 +450,7 @@ namespace TheSpaceRoles
             Value_TMP.text = GetSelectionName();
             if (func == null || parentId == null)
             {
-                @object.transform.localPosition = new Vector3(3, 2f - 0.5f * i, 0);
+                @object.transform.localPosition = new Vector3(3, 2f - 0.48f * i, 0);
                 i++;
             }
             else

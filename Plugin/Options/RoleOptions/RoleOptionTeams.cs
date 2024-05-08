@@ -30,14 +30,22 @@ namespace TheSpaceRoles
             @object.layer = HudManager.Instance.gameObject.layer;
             var renderer = @object.AddComponent<SpriteRenderer>();
             renderer.sprite = Sprites.GetSpriteFromResources("ui.team_banner_top.png", 400);
-            if (GetLink.CustomTeamLink.Any(x => x.Team == team))
+            try
             {
-                renderer.color = GetLink.ColorFromTeams(team);
+                if (GetLink.CustomTeamLink.Any(x => x.Team == team))
+                {
+                    renderer.color = GetLink.ColorFromTeams(team);
+
+                }
+                else
+                {
+                    renderer.color = Color.magenta;
+                }
 
             }
-            else
+            catch
             {
-                renderer.color = Color.clear;
+                renderer.color = Color.magenta;
             }
 
 

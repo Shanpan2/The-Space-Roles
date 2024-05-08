@@ -9,8 +9,13 @@ namespace TheSpaceRoles
 {
     public static class RoleOptionOptions
     {
+        public static Teams nowTeam = Teams.None;
+
+        public static Roles nowRole = Roles.None;
         public static void Check(Teams teams, Roles roles)
         {
+            nowRole = roles;
+            nowTeam = teams;
 
             CustomOptionsHolder.RoleOptions.Do(x => x.@object.active = false);
             int i = 0;

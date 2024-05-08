@@ -14,6 +14,9 @@ namespace TheSpaceRoles
         {
             foreach (CustomOptionSelectorSetting option in Enum.GetValues(typeof(CustomOptionSelectorSetting)))
             {
+
+
+
                 _ = new CustomOptionSelector(option);
             }
         }

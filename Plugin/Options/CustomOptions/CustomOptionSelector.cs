@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.XR;
 
 namespace TheSpaceRoles
 {
@@ -20,7 +21,7 @@ namespace TheSpaceRoles
         {
             this.Setting = setting;
             @object = new(setting.ToString());
-            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("TSRSettings"));
+            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("TSRSettings").FindChild("Selector"));           
             @object.transform.localPosition = new Vector3(-3f, 1.5f - (float)setting * 1f, -1);
             @object.layer = HudManager.Instance.gameObject.layer;
             var renderer = @object.AddComponent<SpriteRenderer>();
@@ -38,28 +39,16 @@ namespace TheSpaceRoles
             Button.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             Button.OnClick.AddListener((System.Action)(() =>
             {
-                @object.transform.FindChild("E").gameObject.active = true;
                 selectors.First(x => x.Setting == Select).Check();
+                CustomOptionsHolder.TSROptions.Do(x => x.@object.gameObject.active = false);
+                CustomOptionsHolder.TSROptions.Where(x => x.obj_parent == setting).Do(x =>x.@object.gameObject.active = true);
+
                 Select = Setting;
+                
+                CustomOptionsHolder.AllCheck();
             }));
 
-            Button.OnMouseOver.AddListener((System.Action)(() =>
-            {
-                renderer.color = Select == Setting ? Helper.ColorFromColorcode("#cccccc") : Helper.ColorFromColorcode("#555555");
-            }));
-            Button.OnMouseOut.AddListener((System.Action)(() =>
-            {
-                renderer.color = Select == Setting ? Helper.ColorFromColorcode("#cccccc") : Helper.ColorFromColorcode("#333333");
-            }));
-            Button.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
-            Button.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
 
-            GameObject empty = new("E");
-            empty.SetActive(false);
-            empty.transform.SetParent(@object.transform);
-            empty.transform.localPosition = -@object.transform.localPosition;
-            var v = @object.transform.localScale;
-            empty.transform.localRotation = Quaternion.identity;
             TextMeshPro text = new GameObject("Title_TMP").AddComponent<TextMeshPro>();
             text.text = Translation.GetString("optionselector." + setting.ToString());
             text.transform.SetParent(@object.transform);
@@ -78,6 +67,16 @@ namespace TheSpaceRoles
             text.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             text.rectTransform.sizeDelta = new Vector2(2f, 1.6f);
 
+            Button.OnMouseOver.AddListener((System.Action)(() =>
+            {
+                renderer.color = Select == Setting ? Helper.ColorFromColorcode("#cccccc") : Helper.ColorFromColorcode("#555555");
+            }));
+            Button.OnMouseOut.AddListener((System.Action)(() =>
+            {
+                renderer.color = Select == Setting ? Helper.ColorFromColorcode("#cccccc") : Helper.ColorFromColorcode("#333333");
+            }));
+            Button.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
+            Button.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
 
 
 
@@ -90,7 +89,7 @@ namespace TheSpaceRoles
         public void Check()
         {
             @object.GetComponent<SpriteRenderer>().color = Helper.ColorFromColorcode("#333333");
-            @object.transform.FindChild("E").gameObject.active = false;
+
         }
 
     }

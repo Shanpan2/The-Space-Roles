@@ -17,35 +17,25 @@ namespace TheSpaceRoles
         public static List<CustomOption> TSROptions = [];
         public static void AllCheck()
         {
-            try
+            foreach (CustomOptionSelectorSetting value in Enum.GetValues(typeof(CustomOptionSelectorSetting)))
             {
 
-                foreach (CustomOptionSelectorSetting value in Enum.GetValues(typeof(CustomOptionSelectorSetting)))
+                if (TSROptions== null || TSROptions.Count == 0) continue;
+                int b = 0;
+                Logger.Info(TSROptions.Count.ToString());
+
+
+                for (int i = 0; i < TSROptions.Count; i++)
                 {
-
-                    foreach (var option in Options)
+                    if (TSROptions[i].obj_parent == value)
                     {
-                        if (option == null || option.Count == 0) continue;
-                        int b = 0;
-                        Logger.Info(option.Count.ToString());
+                        var op = TSROptions[b];
+                        if (op == null) continue;
+                        op.Check(b);
+                        b++;
 
-
-                        for (int i = 0; i < option.Count; i++)
-                        {
-                            if (option[i].obj_parent == value)
-                            {
-
-                                var op = option[i];
-                                if (op == null) continue;
-                                op.Check(b);
-                            }
-                        }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e.Source + "\n" + e.Message + "\n" + e.StackTrace);
             }
         }
         public static Func<string>[] GetSeconds(float sec = 60f, float delta_sec = 2.5f)
