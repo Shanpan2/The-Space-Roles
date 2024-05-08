@@ -37,7 +37,7 @@ namespace TheSpaceRoles
 
                                 var op = option[i];
                                 if (op == null) continue;
-                                op.Check(ref b);
+                                op.Check(b);
                             }
                         }
                     }
@@ -76,7 +76,23 @@ namespace TheSpaceRoles
         {
             return sec.ToString;
         }
+        public static Func<string>[] GetRateList()
+        {
+            return [() => "0%", () => "10%", () => "20%", () => "30%", () => "40%", () => "50%", () => "60%", () => "70%", () => "80%", () => "90%", () => "100%"];
 
+        }
+
+        public static Func<string>[] GetCountList()
+        {
+            return [() => "0", () => "1", () => "2", () => "3", () => "4", () => "5", () => "6", () => "7", () => "8", () => "9", () => "10", () => "11", () => "12", () => "13", () => "14", () => "15"];
+
+        }
+        public static void CreateRoleOptions(Teams team,Roles role)
+        {
+
+            RoleOptions.Add(RoleCreate(team, role, "spawncount", GetCountList(), () => "1"));
+            RoleOptions.Add(RoleCreate(team, role, "spawnrate", GetRateList(), () => "0%"));
+        }
         public static void CreateCustomOptions()
         {
             if (TSROptions.Count != 0) return;

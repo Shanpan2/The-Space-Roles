@@ -102,6 +102,7 @@ namespace TheSpaceRoles
             AddedRoleButton.OnClick.AddListener((System.Action)(() =>
             {
                 RoleOptionsDescription.Set(teams, this.role);
+                RoleOptionOptions.Check(teams,this.role);
 
             }));
 
@@ -164,7 +165,7 @@ namespace TheSpaceRoles
             lbutton.OnMouseOut.AddListener((UnityAction)(() => { left.color = Color.white; }));
             lbutton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
             lbutton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
-
+            CustomOptionsHolder.CreateRoleOptions(team, role);
 
 
         }

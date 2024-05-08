@@ -16,5 +16,14 @@
             CanUseVital = true;
             HasTask = false;
         }
+        public override bool WinCheck()
+        {
+            var v = DataBase.GetPlayerCountInTeam();
+            if (this.Role.Exiled)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

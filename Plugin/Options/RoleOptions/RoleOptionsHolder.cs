@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace TheSpaceRoles
 {
@@ -8,7 +9,7 @@ namespace TheSpaceRoles
     {
         public static List<RoleOptions> roleOptions = new();
         public static Roles selectedRoles = Roles.None;
-        public static void RoleOptionsCreate()
+        public static void RoleOptionsCreate(ref GameObject v,ref GameObject setting)
         {
 
             roleOptions = [];
@@ -24,6 +25,7 @@ namespace TheSpaceRoles
                     i++;
                 }
             }
+            ScrollerP scroller = new("RO_Scroller", ref v, ref setting, new(-5, 5, 0), new(-3, -5, 0), new(-3.45f, -0.5f, 0), roleOptions.Count * 0.36f,v.transform.position.y);
         }
 
     }

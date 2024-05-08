@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -110,6 +112,7 @@ namespace TheSpaceRoles
             var r = GetLink.GetCustomRole(roles);
             var t = GetLink.GetCustomTeam(teams);
             SetDescription(r.ColoredRoleName + t.ColoredShortTeamName, r.ColoredIntro, t.WinConditionTeam + "\n" + r.Description());
+
         }
         public static void SetDescription(string Title_, string Intro_, string Description_)
         {

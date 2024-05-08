@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using HarmonyLib;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace TheSpaceRoles
 {
@@ -36,15 +39,53 @@ namespace TheSpaceRoles
 
         public static void ResetAndPrepare()
         {
-
             AllPlayerTeams.Clear();
             AllPlayerRoles.Clear();
             AllPlayerDeathReasons.Clear();
+            buttons.Do(x => GameObject.Destroy(x.actionButton));
             buttons.Clear();
 
             HudManagerGame.IsGameStarting = false;
 
             HudManagerGame.OnGameStarted = true;
+        }
+
+        public static Dictionary<Teams, int> GetPlayerCountInTeam()
+        {
+
+
+            Dictionary<Teams, int> result = [];
+
+            foreach (Teams team in Enum.GetValues(typeof(Teams))) 
+            {
+                result.Add(team,0);
+            }
+            foreach (var p in AllPlayerRoles)
+            {
+                if (p.Value.Any(x => !x.Dead))
+                {
+                    result[p.Value[0].Team.Team]++;
+                }
+            }
+            return result;
+        }
+        public static int AlivingNotKillPlayer()
+        {
+            int i = 0;
+            foreach(var team in GetPlayerCountInTeam().Where(x => new Teams[] { Teams.Impostor, Teams.Jackal }.Contains(x.Key)))
+            {
+                i += team.Value;
+            }
+            return i;
+        }
+        public static int AlivingKillPlayer()
+        {
+            int i = 0;
+            foreach (var team in GetPlayerCountInTeam().Where(x => new Teams[] { Teams.Impostor, Teams.Jackal }.Contains(x.Key)))
+            {
+                i += team.Value;
+            }
+            return i;
         }
     }
 

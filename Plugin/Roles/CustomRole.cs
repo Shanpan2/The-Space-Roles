@@ -12,8 +12,9 @@ namespace TheSpaceRoles
     {
         public int PlayerId;
         public string PlayerName;
+        public PlayerControl PlayerControl;
         public Teams[] teamsSupported = Enum.GetValues(typeof(Teams)).Cast<Teams>().ToArray();
-        public Teams Team;
+        public CustomTeam Team;
         public Roles Role;
         public Color Color = new(0, 0, 0);
         public bool HasKillButton = false;
@@ -29,15 +30,14 @@ namespace TheSpaceRoles
         public bool? HasTask = null;
         public void Init()
         {
-            CanUseVent = CanUseVent == null ? GetLink.GetCustomTeam(Team).CanUseVent : CanUseVent;
-            CanUseAdmin = CanUseAdmin == null ? GetLink.GetCustomTeam(Team).CanUseAdmin : CanUseAdmin;
-            CanUseBinoculars = CanUseBinoculars == null ? GetLink.GetCustomTeam(Team).CanUseBinoculars : CanUseBinoculars;
-            CanUseCamera = CanUseCamera == null ? GetLink.GetCustomTeam(Team).CanUseCamera : CanUseCamera;
-            CanUseDoorlog = CanUseDoorlog == null ? GetLink.GetCustomTeam(Team).CanUseDoorlog : CanUseDoorlog;
-            CanUseBinoculars = CanUseBinoculars == null ? GetLink.GetCustomTeam(Team).CanUseBinoculars : CanUseBinoculars;
-            CanRepairSabotage = CanRepairSabotage == null ? GetLink.GetCustomTeam(Team).CanUseBinoculars : CanRepairSabotage;
-            HasTask = HasTask == null ? GetLink.GetCustomTeam(Team).HasTask : HasTask;
-
+            CanUseVent = CanUseVent == null ? GetLink.GetCustomTeam(Team.Team).CanUseVent : CanUseVent;
+            CanUseAdmin = CanUseAdmin == null ? GetLink.GetCustomTeam(Team.Team).CanUseAdmin : CanUseAdmin;
+            CanUseBinoculars = CanUseBinoculars == null ? GetLink.GetCustomTeam(Team.Team).CanUseBinoculars : CanUseBinoculars;
+            CanUseCamera = CanUseCamera == null ? GetLink.GetCustomTeam(Team.Team).CanUseCamera : CanUseCamera;
+            CanUseDoorlog = CanUseDoorlog == null ? GetLink.GetCustomTeam(Team.Team).CanUseDoorlog : CanUseDoorlog;
+            CanUseBinoculars = CanUseBinoculars == null ? GetLink.GetCustomTeam(Team.Team).CanUseBinoculars : CanUseBinoculars;
+            CanRepairSabotage = CanRepairSabotage == null ? GetLink.GetCustomTeam(Team.Team).CanUseBinoculars : CanRepairSabotage;
+            HasTask = HasTask == null ? GetLink.GetCustomTeam(Team.Team).HasTask : HasTask;
 
         }
         public void ResetStart()
@@ -61,10 +61,16 @@ namespace TheSpaceRoles
                 button.Hide();
             }
         }
+        public bool Dead = false;
+        public bool Exiled = false;
+
+
+
         public virtual void HudManagerStart(HudManager hudManager) { }
         public virtual void MeetingEnd() { }
         public virtual void Killed() { }
         public virtual void WasKilled() { }
+        public virtual void Die() { }
         public virtual void Update() { }
         public virtual void APUpdate() { }
         public string ColoredRoleName => ColoredText(Color, Translation.GetString("role." + Role.ToString() + ".name"));
@@ -111,11 +117,12 @@ namespace TheSpaceRoles
         /// プレイヤーid入れて初期化
         /// </summary>
         /// <param name="playerId">PlayerControl pc.playerId</param>
-        public void ReSet(int playerId)
+        public void ReSet(int playerId,Teams teams)
         {
             PlayerId = playerId;
+            PlayerControl = DataBase.AllPlayerControls().First(x=>x.PlayerId==playerId);
             PlayerName = DataBase.AllPlayerControls().First(x => x.PlayerId == playerId).name.Replace("<color=.*>", string.Empty).Replace("</color>", string.Empty); ;
-            Team = DataBase.AllPlayerTeams[playerId];
+            Team = GetLink.GetCustomTeam(teams);
             Init();
         }
     }
@@ -185,6 +192,28 @@ namespace TheSpaceRoles
                 }
             }
 
+        }
+    }
+    [HarmonyPatch(typeof(PlayerControl),nameof(PlayerControl.Exiled))]
+    public static class PlayerControlExiledPatch
+    {
+        public static void Postfix(PlayerControl __instance) {
+
+            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Team.WasExiled());
+            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Exiled=true);
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
+    public static class PlayerControlDiePatch
+    {
+        public static void Postfix(PlayerControl __instance)
+        {
+
+            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Die());
+            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Dead=true);
+            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => Logger.Info(x.PlayerId.ToString()));
+            Logger.Info(__instance.PlayerId +"_"+__instance.Data.PlayerName);
         }
     }
 

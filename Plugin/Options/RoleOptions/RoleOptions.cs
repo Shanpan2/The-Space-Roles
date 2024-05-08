@@ -62,6 +62,7 @@ namespace TheSpaceRoles
             Button.OnClick.AddListener((System.Action)(() =>
             {
                 RoleOptionsDescription.Set(role);
+                RoleOptionOptions.Check(Teams.None, Roles.None);
             }));
 
             Button.OnMouseOver.AddListener((System.Action)(() =>

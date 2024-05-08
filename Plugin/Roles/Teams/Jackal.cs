@@ -16,5 +16,14 @@
             CanUseVital = true;
             HasTask = false;
         }
+        public override bool WinCheck()
+        {
+            var v = DataBase.GetPlayerCountInTeam();
+            if (v[Teams.Jackal] >= v[Teams.Crewmate] && v[Teams.Impostor] == 0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

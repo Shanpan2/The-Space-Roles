@@ -175,7 +175,7 @@ namespace TheSpaceRoles
             CustomOptionsHolder.CreateCustomOptions();
             CustomOptionsHolder.AllCheck();
             RoleOptionsDescription.StartExplain();
-            RoleOptionsHolder.RoleOptionsCreate();
+            RoleOptionsHolder.RoleOptionsCreate(ref v,ref customroleSettings);
             RoleOptionTeamsHolder.Create();
         }
 
@@ -200,7 +200,7 @@ namespace TheSpaceRoles
     public class CustomOption
     {
         public static int preset = 0;
-        public string GetName() => Translation.GetString("option." + name);
+        public string GetName() =>this.CustomSetting == CustomSetting.TSRSettings ? Translation.GetString("option." + name) : Translation.GetString("roption." + name);
         //public string GetSelectionName() => Translation.GetString("option.selection.sec", [selections[selection].ToString()]);
         public string GetSelectionName()
         {
@@ -208,14 +208,14 @@ namespace TheSpaceRoles
             return selections[selection]();
 
         }
-        public static Transform GetTransformFromSetting(CustomSetting setting)
+        public static Transform GetTransformFromSetting(CustomSetting setting, CustomOptionSelectorSetting? parent)
         {
             var csetting = HudManager.Instance.transform.FindChild("CustomSettings");
             return setting switch
             {
-                CustomSetting.TSRSettings => csetting.FindChild("TSRSettings"),
-                CustomSetting.RoleSettings => csetting.FindChild("CustomRoleSettings"),
-                _ => csetting.FindChild("TSRSettings"),
+                CustomSetting.TSRSettings => csetting.FindChild("TSRSettings").FindChild(parent.ToString()).FindChild("E"),
+                CustomSetting.RoleSettings => csetting.FindChild("CustomRoleSettings").FindChild("E"),
+                _ => csetting.FindChild("CustomRoleSettings"),
             }; ;
         }
         public string name;
@@ -256,18 +256,38 @@ namespace TheSpaceRoles
             this.defaultSelection = index >= 0 ? index : 0;
             this.parentId = parentId;
 
-            entry = TSR.Instance.Config.Bind($"Preset{preset}", name, defaultSelection);
+            if (this.CustomSetting == CustomSetting.TSRSettings)
+            {
+                entry = TSR.Instance.Config.Bind($"Preset{preset}", name, defaultSelection);
+            }
+            else
+            {
+                entry = TSR.Instance.Config.Bind($"Preset{preset}", team.ToString()+"_"+role.ToString()+"_"+name, defaultSelection);
+            }
+
 
             @object = new GameObject();
             var renderer = @object.AddComponent<SpriteRenderer>();
             renderer.sprite = Sprites.GetSpriteFromResources("ui.banner.png", 200);
             renderer.color = Helper.ColorFromColorcode("#333333");
-            @object.name = name;
-            @object.transform.SetParent(GetTransformFromSetting(customSetting).FindChild(parent.ToString()).FindChild("E"));
+            if (customSetting == CustomSetting.TSRSettings)
+            {
+
+                @object.name = name;
+            }
+            else
+            {
+
+                @object.name = team+"_"+role+"_"+name;
+            }
+            @object.transform.SetParent(GetTransformFromSetting(customSetting,parent));
             @object.active = true;
             @object.layer = HudManager.Instance.gameObject.layer;
             @object.transform.localPosition = Vector3.zero;
             @object.transform.localScale = new(0.9f, 0.9f, 0.9f);
+            @object.SetActive(false) ;
+
+
 
             Title_TMP = new GameObject("Title_TMP").AddComponent<TextMeshPro>();
             Title_TMP.transform.SetParent(@object.transform);
@@ -321,7 +341,7 @@ namespace TheSpaceRoles
             rbutton._CachedZ_k__BackingField = 0.1f;
             rbutton.CachedZ = 0.1f;
             rbutton.Colliders = new[] { right.GetComponent<BoxCollider2D>() };
-            rbutton.OnClick.AddListener((System.Action)(() => { updateSelection(selection + 1); }));
+            rbutton.OnClick.AddListener((System.Action)(() => { UpdateSelection(selection + 1); }));
             rbutton.OnMouseOver.AddListener((System.Action)(() => { right.color = Palette.AcceptedGreen; }));
             rbutton.OnMouseOut.AddListener((System.Action)(() => { right.color = Color.white; }));
             rbutton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
@@ -344,7 +364,7 @@ namespace TheSpaceRoles
             lbutton._CachedZ_k__BackingField = 0.1f;
             lbutton.CachedZ = 0.1f;
             lbutton.Colliders = new[] { left.GetComponent<BoxCollider2D>() };
-            lbutton.OnClick.AddListener((UnityAction)(() => { updateSelection(selection - 1); }));
+            lbutton.OnClick.AddListener((UnityAction)(() => { UpdateSelection(selection - 1); }));
             lbutton.OnMouseOver.AddListener((UnityAction)(() => { left.color = Palette.AcceptedGreen; }));
             lbutton.OnMouseOut.AddListener((UnityAction)(() => { left.color = Color.white; }));
             lbutton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
@@ -388,14 +408,22 @@ namespace TheSpaceRoles
 
 
 
-        public void updateSelection(int newSelection)
+        public void UpdateSelection(int newSelection)
         {
             entry.Value = ((newSelection % selections.Length) + selections.Length) % selections.Length;
             Logger.Info($"{name}:{selection}");
             ShareOptionSelections();
-            CustomOptionsHolder.AllCheck();
+            if(this.CustomSetting ==CustomSetting.TSRSettings)
+            {
+                CustomOptionsHolder.AllCheck();
+
+            }
+            else
+            {
+                RoleOptionOptions.Check(this.team, this.role);
+            }
         }
-        public void Check(ref int i)
+        public void Check( float i)
         {
             Value_TMP.text = GetSelectionName();
             if (func == null || parentId == null)

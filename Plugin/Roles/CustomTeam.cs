@@ -5,6 +5,7 @@ namespace TheSpaceRoles
 {
     public abstract class CustomTeam
     {
+        public CustomRole Role;
         public Teams Team;
         public Color Color = new(0, 0, 0);
         public bool HasKillButton = false;
@@ -23,6 +24,8 @@ namespace TheSpaceRoles
         public string ColoredIntro => ColoredText(Color, Translation.GetString("intro.cosmetic", [Translation.GetString("team." + Team.ToString() + ".intro")]));
         public string Description => Translation.GetString("team." + Team.ToString() + ".description");
         public string WinConditionTeam => Translation.GetString("wincondition.pre", [Translation.GetString("team." + Team.ToString() + ".wincondition")]);
-        public virtual void WinCheck() { }
+        public abstract bool WinCheck();
+        public virtual bool AdditionalWinCheck(Teams winteam) { return false; }
+        public virtual bool WasExiled() { return false; }
     }
 }
