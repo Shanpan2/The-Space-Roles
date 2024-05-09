@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using HarmonyLib;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -86,8 +87,8 @@ namespace TheSpaceRoles
             TeamButton.CachedZ = 0.1f;
             TeamButton.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             TeamButton.OnClick.AddListener((System.Action)(() =>
-            {
-                RoleOptionsDescription.Set(team);
+            {   RoleOptionTeamRoles.RoleOptionsInTeam.Do(x => { x.CountNone(); });
+                RoleOptionsDescription.Set(team); 
                 RoleOptionOptions.Check(Teams.None,Roles.None);
             }));
 
@@ -135,6 +136,8 @@ namespace TheSpaceRoles
             {
                 isEnable = !isEnable;
                 DropDown.sprite = isEnable ? Sprites.GetSpriteFromResources("ui.arrow_drop_down.png", 50) : Sprites.GetSpriteFromResources("ui.arrow_drop_up.png", 50);
+            
+                RoleOptionTeamRoles.RoleOptionsInTeam.Do(x =>  x.CountNone());
                 Logger.Info(isEnable.ToString(), team.ToString());
             }));
 

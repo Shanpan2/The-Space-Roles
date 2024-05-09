@@ -221,6 +221,64 @@ namespace TheSpaceRoles
     }
     public class CustomOption
     {
+        public static CustomOption GetOption(string option)
+        {
+            foreach (var item in CustomOptionsHolder.Options)
+            {
+                foreach (var item1 in item)
+                {
+                    if (item1.name == option)
+                    {
+                        return item1;
+                    }
+                }
+            }
+            return null;
+        }
+        public static void SetOption(string option, int i)
+        {
+            foreach (var item in CustomOptionsHolder.Options)
+            {
+                foreach (var item1 in item)
+                {
+                    if (item1.name == option)
+                    {
+                        item1.entry.Value = i;
+                        return;
+                    }
+                }
+            }
+            return;
+        }
+        public static CustomOption GetRoleOption(string option,Roles roles,Teams teams)
+        {
+            foreach (var item in CustomOptionsHolder.Options)
+            {
+                foreach (var item1 in item)
+                {
+                    if (item1.name == option && item1.team == teams && item1.role == roles)
+                    {
+                        return item1;
+                    }
+                }
+            }
+            return null;
+        }
+        public static void SetRoleOption(string option,Roles roles,Teams teams, int i)
+        {
+            foreach (var item in CustomOptionsHolder.Options)
+            {
+                foreach (var item1 in item)
+                {
+                    if (item1.name== option&&item1.team==teams&&item1.role==roles)
+                    {
+                        item1.entry.Value = i;
+                        return;
+                    }
+                }
+            }
+            return;
+        }
         public static int preset = 0;
         public string GetName() =>this.CustomSetting == CustomSetting.TSRSettings ? Translation.GetString("option." + name) : Translation.GetString("roption." + name);
         //public string GetSelectionName() => Translation.GetString("option.selection.sec", [selections[selection].ToString()]);
@@ -280,7 +338,7 @@ namespace TheSpaceRoles
 
             if (this.CustomSetting == CustomSetting.TSRSettings)
             {
-                entry = TSR.Instance.Config.Bind($"Preset{preset}", name, defaultSelection);
+                entry = TSR.Instance.Config.Bind($"Preset{preset}", name, defaultSelection); 
             }
             else
             {
@@ -444,6 +502,7 @@ namespace TheSpaceRoles
             {
                 RoleOptionOptions.Check(this.team, this.role);
             }
+            onChange?.Invoke();
         }
         public void Check( float i)
         {

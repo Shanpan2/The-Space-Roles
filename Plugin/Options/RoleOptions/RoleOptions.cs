@@ -63,6 +63,7 @@ namespace TheSpaceRoles
             {
                 RoleOptionsDescription.Set(role);
                 RoleOptionOptions.Check(Teams.None, Roles.None);
+                RoleOptionTeamRoles.RoleOptionsInTeam.Do(x => { x.CountNone(); });
             }));
 
             Button.OnMouseOver.AddListener((System.Action)(() =>

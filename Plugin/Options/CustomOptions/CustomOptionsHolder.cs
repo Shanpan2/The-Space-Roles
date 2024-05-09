@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Epic.OnlineServices.Lobby;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 using static TheSpaceRoles.CustomOption;
 using static TheSpaceRoles.Translation;
 
 
 namespace TheSpaceRoles
 {
+    
     public static class CustomOptionsHolder
     {
         public static List<List<CustomOption>> Options => [
@@ -80,8 +84,8 @@ namespace TheSpaceRoles
         public static void CreateRoleOptions(Teams team,Roles role)
         {
 
-            RoleOptions.Add(RoleCreate(team, role, "spawncount", GetCountList(), () => "1"));
-            RoleOptions.Add(RoleCreate(team, role, "spawnrate", GetRateList(), () => "0%"));
+            RoleOptions.Add(RoleCreate(team, role, "spawncount", GetCountList(), () => "1", onChange:()=> RoleOptionTeamRoles.RoleOptionsInTeam.ToArray().First(x => x.role == role && x.team == team).CheckCount()));
+            RoleOptions.Add(RoleCreate(team, role, "spawnrate", GetRateList(), () => "0%", onChange:() =>Logger.Info("spawnrate"))); ;
         }
         public static void CreateCustomOptions()
         {
