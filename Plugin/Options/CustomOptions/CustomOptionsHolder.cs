@@ -1,4 +1,5 @@
 ﻿using Epic.OnlineServices.Lobby;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,24 +85,23 @@ namespace TheSpaceRoles
         public static void CreateRoleOptions(Teams team,Roles role)
         {
 
-            RoleOptions.Add(RoleCreate(team, role, "spawncount", GetCountList(), () => "1", onChange:()=> RoleOptionTeamRoles.RoleOptionsInTeam.ToArray().First(x => x.role == role && x.team == team).CheckCount()));
-            RoleOptions.Add(RoleCreate(team, role, "spawnrate", GetRateList(), () => "0%", onChange:() =>Logger.Info("spawnrate"))); ;
+            RoleCreate(team, role, "spawncount", GetCountList(), () => "0", onChange:()=> RoleOptionTeamRoles.RoleOptionsInTeam.ToArray().Do(x=>x.CheckCount()));
+            RoleCreate(team, role, "spawnrate", GetRateList(), () => "0%"); ;
         }
         public static void CreateCustomOptions()
         {
             if (TSROptions.Count != 0) return;
 
-            TSROptions = [
-            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "use_records_admin", true),
-            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_admin",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "use_records_admin", true);
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_admin", GetSecondsIncludeUnlimited(180), Unlimited());
 
-            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_vital",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_vital", GetSecondsIncludeUnlimited(180), Unlimited());
 
-            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_camera",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_camera", GetSecondsIncludeUnlimited(180), Unlimited());
 
-            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_doorlog",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_doorlog", GetSecondsIncludeUnlimited(180), Unlimited());
 
-            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_binoculars",GetSecondsIncludeUnlimited(180),Unlimited()),
+            TSRCreate(CustomOptionSelectorSetting.InformationEquipment, "limit_binoculars", GetSecondsIncludeUnlimited(180), Unlimited());
 
             /*
             Create(CustomOptionSelectorSetting.General, "seee", GetSeconds(), ()=>"0"),
@@ -110,7 +110,24 @@ namespace TheSpaceRoles
             Create(CustomOptionSelectorSetting.Starter, "use", GetSeconds(180,1), ()=>"0"),
             Create(CustomOptionSelectorSetting.Starter, "user", GetSeconds(120,10), ()=>"0"),*/
 
-            ];
+
+            foreach (Roles role in Enum.GetValues(typeof(Roles)))
+            {
+                if (GetLink.CustomRoleLink.Any(x=>x.Role==role))
+                {
+                    foreach (var team in GetLink.GetCustomRole(role).teamsSupported)
+                    {
+
+                        string s = team + "_" + role + "_" + "spawncount";
+                        var value = TSR.Instance.Config.Bind($"Preset{preset}", s, 0).Value;
+                        if (value > 0)
+                        {
+
+                            RoleOptionTeamRoles.RoleOptionsInTeam.Add(new RoleOptionTeamRoles(team, role));
+                        }
+                    }
+                }
+            }
         }
 
     }

@@ -243,7 +243,7 @@ namespace TheSpaceRoles
                 {
                     if (item1.name == option)
                     {
-                        item1.entry.Value = i;
+                        item1.UpdateSelection(i);
                         return;
                     }
                 }
@@ -272,7 +272,7 @@ namespace TheSpaceRoles
                 {
                     if (item1.name== option&&item1.team==teams&&item1.role==roles)
                     {
-                        item1.entry.Value = i;
+                        item1.UpdateSelection(i);
                         return;
                     }
                 }
@@ -467,23 +467,34 @@ namespace TheSpaceRoles
         public static Func<int, bool> funcOff = x => x == 0;
 
 
-        public static CustomOption TSRCreate(CustomOptionSelectorSetting parent, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static void TSRCreate(CustomOptionSelectorSetting parent, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(CustomSetting.TSRSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, parent);
+            if (CustomOptionsHolder.TSROptions.Any(x => x.name == name)) return;
+
+                var v = new CustomOption(CustomSetting.TSRSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, parent);
+                CustomOptionsHolder.TSROptions.Add(v);
+            
         }
-        public static CustomOption TSRCreate(CustomOptionSelectorSetting parent, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static void TSRCreate(CustomOptionSelectorSetting parent, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(CustomSetting.TSRSettings, name, selections, selection, parentId, func, onChange, parent);
+            if (CustomOptionsHolder.TSROptions.Any(x => x.name == name)) return;
+            var v = new CustomOption(CustomSetting.TSRSettings, name, selections, selection, parentId, func, onChange, parent);
+            CustomOptionsHolder.TSROptions.Add(v);
         }
 
 
-        public static CustomOption RoleCreate(Teams teams, Roles roles, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static void RoleCreate(Teams teams, Roles roles, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(CustomSetting.RoleSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, role: roles, team: teams);
+            if (CustomOptionsHolder.RoleOptions.Any(x => x.name == name && x.team == teams && x.role == roles)) return;
+            var v = new CustomOption(CustomSetting.RoleSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, role: roles, team: teams);
+            CustomOptionsHolder.RoleOptions.Add(v);
         }
-        public static CustomOption RoleCreate(Teams teams, Roles roles, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static void RoleCreate(Teams teams, Roles roles, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(CustomSetting.RoleSettings, name, selections, selection, parentId, func, onChange, role: roles, team: teams);
+            if (CustomOptionsHolder.RoleOptions.Any(x => x.name == name&&x.team==teams&&x.role==roles)) return;
+
+            var v = new CustomOption(CustomSetting.RoleSettings, name, selections, selection, parentId, func, onChange, role: roles, team: teams);
+            CustomOptionsHolder.RoleOptions.Add(v);
         }
 
 

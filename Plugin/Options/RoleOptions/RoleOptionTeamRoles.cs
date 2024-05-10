@@ -19,7 +19,6 @@ namespace TheSpaceRoles
         public Roles role;
         public Teams team;
         public int memberCount = 1;
-        public int num = 0;
         public PassiveButton AddedRoleButton;
         public PassiveButton rbutton;
         public PassiveButton lbutton;
@@ -89,7 +88,6 @@ namespace TheSpaceRoles
             Value_TMP.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Value_TMP.rectTransform.sizeDelta = new Vector2(1f, 0.5f);
 
-            SetCount(1);
 
             var box = @object.AddComponent<BoxCollider2D>();
             box.size = renderer.bounds.size;
@@ -168,11 +166,8 @@ namespace TheSpaceRoles
             lbutton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
             lbutton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
 
-            if(CustomOption.GetRoleOption("spawncount", role, team)?.entry?.Value == null)
-            {
                 CustomOptionsHolder.CreateRoleOptions(team, role);
-
-            }
+            
 
 
             if(CustomOption.GetRoleOption("spawncount", role, team).entry.Value < 1)
@@ -181,13 +176,16 @@ namespace TheSpaceRoles
                 CustomOption.SetRoleOption("spawnrate", role, team, 10);
 
             }
-            num = CustomOption.GetRoleOption("spawncount", role, team)?.entry?.Value == null ? CustomOption.GetRoleOption("spawncount", role, team).entry.Value : 1;
-
-
+            memberCount = CustomOption.GetRoleOption("spawncount", role, team).entry.Value;
+            SetCount(memberCount);
         }
         public void SetCount(int count)
         {
-            CustomOption.SetRoleOption("spawncount", role, team, count);
+            if(CustomOption.GetRoleOption("spawncount", role, team).selection != count)
+            {
+
+                CustomOption.SetRoleOption("spawncount", role, team, count);
+            }
             memberCount = count;
             Value_TMP.text = "x" + memberCount;
             Value_TMP.m_sharedMaterial = Data.textMaterial;
@@ -216,7 +214,11 @@ namespace TheSpaceRoles
         }
         public void CheckCount()
         {
-            SetCount(CustomOption.GetRoleOption("spawncount", role, team).entry.Value);
+            if (CustomOption.GetRoleOption("spawncount", role, team).selection != this.memberCount)
+            {
+                SetCount(CustomOption.GetRoleOption("spawncount", role, team).entry.Value);
+            }
+
         }
         public void SetPos(float num)
         {

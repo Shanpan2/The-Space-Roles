@@ -17,7 +17,7 @@ namespace TheSpaceRoles
             nowRole = roles;
             nowTeam = teams;
 
-            CustomOptionsHolder.RoleOptions.Do(x => x.@object.active = false);
+            CustomOptionsHolder.RoleOptions.Where(x=>x.role!=roles||x.team!=teams).Do(x => x.@object.active = false);
             int i = 0;
             foreach (var ro in CustomOptionsHolder.RoleOptions.Where(x => x.role == roles && x.team == teams))
             {
