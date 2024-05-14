@@ -110,12 +110,12 @@ namespace TheSpaceRoles
             private static bool Prefix()
             {
                 if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || AmongUsClient.Instance?.GameState ==null) return false;
-                string str = "";
+                /*string str = "";
                 foreach (var item in DataBase.GetPlayerCountInTeam())
                 {
                     str +="\n"+ item.Key.ToString() + ","+item.Value.ToString();
                 }
-                Logger.Info(str);
+                Logger.Info(str);*/
                 System.Collections.Generic.List<Teams> WinTeams = [];
                 foreach (var roles in DataBase.AllPlayerRoles)
                 {
@@ -147,18 +147,18 @@ namespace TheSpaceRoles
                             }
                         }
                     }
+                    if (WinTeams.Count == 1)
+                    {
+                        CustomRpcEndGame(WinTeams[0], [.. AddtionalWinnerTeams]);
+                        return false;
+                    }
+                    else if (WinTeams.Count > 1)
+                    {
+                        Logger.Info("bugbug");
+                    }
                 }
-                if (WinTeams.Count == 1)
-                {
-                    CustomRpcEndGame(WinTeams[0],[..AddtionalWinnerTeams]);
-                    return false;
-                }
-                else if (WinTeams.Count > 1)
-                {
-                    Logger.Info("bugbug");
-                }
-                return false;
 
+                return false;
             }
         }
     }

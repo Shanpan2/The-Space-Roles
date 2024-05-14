@@ -187,7 +187,7 @@ namespace TheSpaceRoles
                 CustomOption.SetRoleOption("spawncount", role, team, count);
             }
             memberCount = count;
-            Value_TMP.text = "x" + memberCount;
+            Value_TMP.text = Translation.GetString("people_count",[memberCount.ToString()]);
             Value_TMP.m_sharedMaterial = Data.textMaterial;
             Value_TMP.material = Data.textMaterial;
             Value_TMP.fontMaterial = Data.textMaterial;

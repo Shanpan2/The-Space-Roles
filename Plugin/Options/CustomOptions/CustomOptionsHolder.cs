@@ -126,6 +126,14 @@ namespace TheSpaceRoles
                             RoleOptionTeamRoles.RoleOptionsInTeam.Add(new RoleOptionTeamRoles(team, role));
                         }
                     }
+
+                    string s_ = "-1" + "_" + role + "_" + "spawncount";
+                    var value_ = TSR.Instance.Config.Bind($"Preset{preset}", s_, 0).Value;
+                    if (value_ > 0)
+                    {
+
+                        RoleOptionTeamRoles.RoleOptionsInTeam.Add(new RoleOptionTeamRoles((Teams)(-1), role));
+                    }
                 }
             }
         }

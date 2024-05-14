@@ -142,7 +142,10 @@ namespace TheSpaceRoles
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Start)),HarmonyPostfix]
         public static void Start_Postfix(PlayerControl __instance)
         {
-
+            if (HudManager.Instance.transform.FindChild("CustomSettings") != null)
+            {
+                return;
+            }
             var cSettings = new GameObject("CustomSettings");
             cSettings.transform.SetParent(HudManager.Instance.transform);
             cSettings.active = true;
@@ -202,11 +205,21 @@ namespace TheSpaceRoles
         }
         public static ScrollerP optsc;
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame)),HarmonyPostfix]
-        public static void End_Postfix(PlayerControl __instance)
+        public static void End_Postfix()
         {
             CustomOptionSelector.selectors = [];
             CustomOptionsHolder.Options.Do(x => x = []); 
             RoleOptionsHolder.roleOptions=[];
+            RoleOptionTeamsHolder.TeamsHolder = [];
+            RoleOptionTeamRoles.RoleOptionsInTeam = [];
+
+        }
+        [HarmonyPatch(typeof(GameManager), nameof(GameManager.EndGame)), HarmonyPostfix]
+        public static void Endgame_Postfix()
+        {
+            CustomOptionSelector.selectors = [];
+            CustomOptionsHolder.Options.Do(x => x = []);
+            RoleOptionsHolder.roleOptions = [];
             RoleOptionTeamsHolder.TeamsHolder = [];
             RoleOptionTeamRoles.RoleOptionsInTeam = [];
 

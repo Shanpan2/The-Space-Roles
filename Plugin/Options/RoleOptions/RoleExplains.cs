@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 
 namespace TheSpaceRoles
 {
@@ -103,15 +104,33 @@ namespace TheSpaceRoles
         }
         public static void Set(Teams teams)
         {
-            var t = GetLink.GetCustomTeam(teams);
-            if (t == null) Logger.Info("t is null");
-            SetDescription(t.ColoredTeamName, t.ColoredIntro, t.Description);
+            if((int)teams == -1)
+            {
+                SetDescription(Helper.ColoredText(Color.white,Translation.GetString("team.additional.name")), Helper.ColoredText(Color.white, Translation.GetString("team.additional.intro")), Helper.ColoredText(Color.white, Translation.GetString("team.additional.description")));
+            }
+            else
+            {
+
+                var t = GetLink.GetCustomTeam(teams);
+                if (t == null) Logger.Info("t is null");
+                SetDescription(t.ColoredTeamName, t.ColoredIntro, t.Description);
+            }
         }
         public static void Set(Teams teams, Roles roles)
         {
-            var r = GetLink.GetCustomRole(roles);
-            var t = GetLink.GetCustomTeam(teams);
-            SetDescription(r.ColoredRoleName + t.ColoredShortTeamName, r.ColoredIntro, t.WinConditionTeam + "\n" + r.Description());
+            if ((int)teams == -1)
+            {
+
+                var r = GetLink.GetCustomRole(roles);
+                SetDescription(r.ColoredRoleName + Translation.GetString("team.additional.sname"), r.ColoredIntro, "\n" + r.Description()); ;
+            }
+            else
+            {
+
+                var r = GetLink.GetCustomRole(roles);
+                var t = GetLink.GetCustomTeam(teams);
+                SetDescription(r.ColoredRoleName + t.ColoredShortTeamName, r.ColoredIntro, t.WinConditionTeam + "\n" + r.Description());
+            }
 
         }
         public static void SetDescription(string Title_, string Intro_, string Description_)

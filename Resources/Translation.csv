@@ -66,11 +66,20 @@ deathreason.sheriffsuicide,Suicide By Sheriff,,,,,,,,,,,自爆,,,,,自爆
 intro.cosmetic,~{0}~,,,,,,,,,,,～{0}～,,,,,～{0}～
 wincondition.pre,Victory conditions : {0},,,,,,,,,,,勝利条件 : {0},,,,,
 canvisibleteam,,,,,,,,,,,,出現可能陣営 : {0},,,,,
+people_count,x{0},,,,,,,,,,,x{0},,,,,
 ,,,,,,,,,,,,,,,,,
 ##Team,,,,,,,,,,,,,,,,,
 #other teams,,,,,,,,,,,,,,,,,
 team.other.name,Neutral,,,,,,,,,,,ニュートラル,,,,,第三陣営
 team.all.name,All,,,,,,,,,,,すべて,,,,,
+,,,,,,,,,,,,,,,,,,
+#additional,,,,,,,,,,,,,,,,,
+team.additional.name,additional,,,,,,,,,,,属性,,,,,
+team.additional.sname,(A),,,,,,,,,,,,,,,,
+team.additional.intro,,,,,,,,,,,,追加能力だ!,,,,,
+team.additional.sintro,,,,,,,,,,,,追加能力だ!,,,,,
+team.additional.description,,,,,,,,,,,,属性,,,,,
+team.additional.wincodition,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,
 #crewmate,,,,,,,,,,,,,,,,,
 team.crewmate.name,Crewmate,,,,,,,,,,,クルー,,,,,村人陣営
