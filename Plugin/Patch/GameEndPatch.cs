@@ -20,7 +20,7 @@ namespace TheSpaceRoles
             GameManager.Instance.RpcEndGame((GameOverReason)winteams + 10,true);
         }
         public static Teams WinnerTeam = Teams.None;
-        public static System.Collections.Generic.List<Teams> AddtionalWinnerTeams = [];
+        public static System.Collections.Generic.List<Teams> AdditionalWinnerTeams = [];
         //public static void CustomEndGame(Teams winteam, Teams[] additionalwinteams)
         //{
         //    WinnerTeam = winteam;
@@ -76,6 +76,7 @@ namespace TheSpaceRoles
                     var winteam = (Teams)(reason - 10);
                     TempData.winners = new();
                     var v =TempData.winners;
+
                     Logger.Info("WinTeam:"+winteam.ToString());
                     foreach (var item in DataBase.AllPlayerRoles)
                     {
@@ -83,9 +84,10 @@ namespace TheSpaceRoles
                         {
 
                             v.Add(new WinningPlayerData(DataBase.AllPlayerControls().First(y => y.PlayerId == item.Key).Data));
-                        }else if(item.Value.Any(c =>AddtionalWinnerTeams.Contains( c.Team.Team)))
+                        }else if(item.Value.Any(c =>c.Team.AdditionalWinCheck(winteam)))
                         {
                             v.Add(new WinningPlayerData(DataBase.AllPlayerControls().First(y => y.PlayerId == item.Key).Data));
+                            item.Value.DoIf(x=>x.Team.AdditionalWinCheck(winteam)&& !AdditionalWinnerTeams.Contains(x.Team.Team), x=>AdditionalWinnerTeams.Add(x.Team.Team));
                         }
                         else
                         {
@@ -134,22 +136,9 @@ namespace TheSpaceRoles
                 {
                     Logger.Info("WinnerTeam:" + WinTeams[0].ToString());
                     System.Collections.Generic.List<Teams> AdditionalWinTeams = [];
-                    foreach (var roles in DataBase.AllPlayerRoles)
-                    {
-                        foreach (var item in roles.Value)
-                        {
-                            if (item.Team.AdditionalWinCheck(WinTeams[0]))
-                            {
-                                if (!AdditionalWinTeams.Contains(item.Team.Team))
-                                {
-                                    AdditionalWinTeams.Add(item.Team.Team);
-                                }
-                            }
-                        }
-                    }
                     if (WinTeams.Count == 1)
                     {
-                        CustomRpcEndGame(WinTeams[0], [.. AddtionalWinnerTeams]);
+                        CustomRpcEndGame(WinTeams[0], [.. AdditionalWinnerTeams]);
                         return false;
                     }
                     else if (WinTeams.Count > 1)

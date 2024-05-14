@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
@@ -40,13 +41,16 @@ namespace TheSpaceRoles
             if (PlayerControl.LocalPlayer.AmOwner)
             {
 
-                Dictionary<Teams, int> teams = new Dictionary<Teams, int>() { { Teams.Impostor, 1 } };
-                SendRpcSetTeam(teams);
 
                 int[] players = DataBase.AllPlayerControls().Select(x=>(int)x.PlayerId).ToArray();
 
+                Dictionary<Teams, int> teams = new() {};
+                foreach (Teams team in Enum.GetValues(typeof(Teams)))
+                {
+                    teams.Add(team, 0);
+                }
 
-                Dictionary<Teams, Dictionary<Roles, int>> roles = [];
+                    Dictionary<Teams, Dictionary<Roles, int>> roles = [];
 
                 foreach (Roles role in Enum.GetValues(typeof(Roles)))
                 {
@@ -65,7 +69,7 @@ namespace TheSpaceRoles
                                 }
                                 roles[team].Add(role, value);
                                 //Logger.Info($"{team}_{role}:{value}");
-
+                                teams[team] += value;
                             }
                         }
                         string s_ = "-1_" + role + "_" + "spawncount";
@@ -82,7 +86,11 @@ namespace TheSpaceRoles
                         }
                     }
                 }
-                foreach(var team in roles)
+                //SetTeam
+                SendRpcSetTeam(teams);
+
+                //SetRoles
+                foreach (var team in roles)
                 {
                     if ((int)team.Key == -1)
                     {
