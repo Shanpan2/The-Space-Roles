@@ -34,7 +34,7 @@ namespace TheSpaceRoles
         {
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) =>
             {
-
+                __instance.BackgroundBar.material.color = RoleColor();
                 __instance.RoleBlurbText.color = RoleColor();
                 __instance.RoleBlurbText.text = Translation.GetString($"role.{DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId][0].Role}.intro");
                 __instance.RoleText.color = RoleColor();

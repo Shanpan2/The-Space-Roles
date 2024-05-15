@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using InnerNet;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static TheSpaceRoles.Helper;
@@ -42,29 +43,38 @@ namespace TheSpaceRoles
         }
         public void ResetStart()
         {
-            ActionBool(HudManager.Instance.ImpostorVentButton, (bool)CanUseVent);
-            ActionBool(HudManager.Instance.KillButton, (bool)HasKillButton);
-            HudManager.Instance.ImpostorVentButton.gameObject.SetActive((bool)CanUseVent);
-            HudManager.Instance.KillButton.gameObject.SetActive((bool)HasKillButton);
+            ActionBool(FastDestroyableSingleton<HudManager>.Instance.ImpostorVentButton, (bool)CanUseVent);
+            ActionBool(FastDestroyableSingleton<HudManager>.Instance.KillButton, (bool)HasKillButton);
         }
         protected void ActionBool(ActionButton button,bool show_hide)
         {
             if(show_hide)
             {
-                button.enabled = true;
-                button.gameObject.SetActive(true);
+                //button.enabled = true;
+                //button.gameObject.SetActive(true);
+                //button.canInteract = true;
+                button.canInteract = true;
+                button.Show();
             }
             else
-                button.enabled = false;
-            button.gameObject.SetActive(false);
             {
+                button.enabled = false;
                 button.Hide();
             }
         }
+        protected void VentUpdate()
+        {
+            if ((bool)CanUseVent)
+            {
+
+            }
+        }
+        private static Vent SetTargetVent(List<Vent> untarget = null, bool forceout = false)
+        {
+            return ModHelpers.SetTargetVent(untargetablePlayers: untarget, forceout: forceout);
+        }
         public bool Dead = false;
         public bool Exiled = false;
-
-
 
         public virtual void HudManagerStart(HudManager hudManager) { }
         public virtual void MeetingEnd() { }

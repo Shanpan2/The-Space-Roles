@@ -14,13 +14,18 @@ namespace TheSpaceRoles
 
             teamsSupported = [Teams.Madmate];
             Role = Roles.MadMate;
-            Color = Palette.ImpostorRed;
+            Color = ColorFromColorcode("#C10000");
             HasKillButton = false;
-            CanUseVent = true;
         }
         public override void HudManagerStart(HudManager __instance)
         {
 
+            foreach (Vent vent in ShipStatus.Instance.AllVents)
+            {
+                vent.Right = null;
+                vent.Center = null;
+                vent.Left = null;
+            }
         }
     }
 }
