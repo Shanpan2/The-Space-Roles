@@ -14,7 +14,7 @@ namespace TheSpaceRoles
 
             teamsSupported = [Teams.Madmate];
             Role = Roles.MadMate;
-            Color = ColorFromColorcode("#C10000");
+            Color = Palette.ImpostorRed;
             HasKillButton = false;
         }
         public override void HudManagerStart(HudManager __instance)
@@ -26,6 +26,9 @@ namespace TheSpaceRoles
                 vent.Center = null;
                 vent.Left = null;
             }
+        }
+        public override void Update()
+        {
         }
     }
 }

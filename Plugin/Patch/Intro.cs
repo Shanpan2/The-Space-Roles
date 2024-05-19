@@ -14,18 +14,16 @@ namespace TheSpaceRoles
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) =>
             {
 
-                __instance.TeamTitle.color = TeamColor();
-                __instance.TeamTitle.text = Translation.GetString($"team.{DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId][0].Team.Team}.name");
+                __instance.BackgroundBar.material.color = TeamColor();
+                __instance.TeamTitle.text = Helper.ColoredText( TeamColor(),Translation.GetString($"team.{DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId][0].Team.Team}.name"));
 
             })));
         }
         public static void Postfix(IntroCutscene __instance)
         {
-
-
         }
+        public static Color TeamColor() => DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId][0].Team.Color;
 
-        public static Color TeamColor() => GetLink.ColorFromTeams(DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId][0].Team.Team);
     }
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
     public static class IntroShowRole
@@ -34,7 +32,6 @@ namespace TheSpaceRoles
         {
             __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) =>
             {
-                __instance.BackgroundBar.material.color = RoleColor();
                 __instance.RoleBlurbText.color = RoleColor();
                 __instance.RoleBlurbText.text = Translation.GetString($"role.{DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId][0].Role}.intro");
                 __instance.RoleText.color = RoleColor();

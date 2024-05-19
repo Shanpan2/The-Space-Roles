@@ -1,8 +1,12 @@
-﻿using HarmonyLib;
+﻿using AmongUs.GameOptions;
+using HarmonyLib;
+using Il2CppSystem.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking.Types;
 
 namespace TheSpaceRoles
 {
