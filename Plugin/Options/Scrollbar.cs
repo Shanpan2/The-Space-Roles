@@ -25,7 +25,7 @@ namespace TheSpaceRoles
         public bool mouse_on_bar = false;
         public float size_y;
 
-        public ScrollerP(string Scrollname, ref GameObject mover_parent,ref GameObject parent,Vector3 startPos,Vector3 endPos,Vector3 Pos, float size_y,float target_y)
+        public ScrollerP(string Scrollname, ref GameObject target_,ref GameObject parent,Vector3 startPos,Vector3 endPos,Vector3 Pos, float size_y)
         {
 
 
@@ -35,14 +35,15 @@ namespace TheSpaceRoles
 
 
 
-            Target = mover_parent.transform;
-            parent_ = parent.transform;
+            Target = target_.transform;
             ScrollPosition = Pos;
             StartPos = startPos;
             EndPos = endPos;
+
             this.size_y = size_y;
 
-            targetStartPos_y = target_y;
+            //targetStartPos_y = target_y;
+            targetStartPos_y = target_.transform.localPosition.y;
             ScrollName = Scrollname;
 
 
@@ -78,6 +79,7 @@ namespace TheSpaceRoles
             scroll.transform.localPosition = Vector3.zero;
             //parent_ = scroll.transform;
             scroll.SetActive(true);
+            parent_ = scroll.transform;
 
             //scrollbar
             scrollbar = new("ScrollBar");
@@ -85,26 +87,29 @@ namespace TheSpaceRoles
             scrollbar.transform.localPosition = ScrollPosition;
             var renderer = scrollbar.AddComponent<SpriteRenderer>();
             renderer.sprite = Sprites.GetSpriteFromResources("ui.scrollbar.png", 225);
-            renderer.color = Helper.ColorEditHSV(renderer.color, v: -0.3f);
+            renderer.color = Helper.ColorEditHSV(Color.white, v: -0.3f);
             scrollbar.layer = HudManager.Instance.gameObject.layer;
 
             scrollbar_passiveButton = scrollbar.AddComponent<PassiveButton>();
             var box = scrollbar.AddComponent<BoxCollider2D>();
             box.size = renderer.bounds.size;
             scrollbar_passiveButton.OnMouseOver = new UnityEvent();
+            scrollbar_passiveButton.OnMouseOut = new UnityEvent();
             scrollbar_passiveButton.OnClick = new ();
             scrollbar_passiveButton._CachedZ_k__BackingField = 0.1f;
             scrollbar_passiveButton.CachedZ = 0.1f;
-            scrollbar_passiveButton.Colliders = new[] { scrollbar.GetComponent<BoxCollider2D>() };
+            scrollbar_passiveButton.Colliders = new[] {box };
 
             scrollbar.SetActive(true);
             scrollbar_passiveButton.OnMouseOver.AddListener((System.Action)(() =>
             {
-                mouse_on_bar = true;
+                this.mouse_on_bar = true;
 
             }));
             scrollbar_passiveButton.OnClick.AddListener((System.Action)(() =>
             {
+                this.mouse_on_bar = true;
+                this.bar_dragging = true;
 
             }));
 
@@ -124,19 +129,20 @@ namespace TheSpaceRoles
             scroller_passiveButton = scroller.AddComponent<PassiveButton>();
             scroller_passiveButton.OnClick = new();
             scroller_passiveButton.OnMouseOver = new UnityEvent();
+            scroller_passiveButton.OnMouseOut = new UnityEvent();
             scroller_passiveButton._CachedZ_k__BackingField = 0.1f;
             scroller_passiveButton.CachedZ = 0.1f;
-            scroller_passiveButton.Colliders = new[] { scroller.GetComponent<BoxCollider2D>() };
+            scroller_passiveButton.Colliders = new[] { scrbox };
 
             scroller_passiveButton.OnMouseOver.AddListener((System.Action)(() =>
             {
-                mouse_on_bar = true;
+                this.mouse_on_bar = true;
 
             }));
             scroller_passiveButton.OnClick.AddListener((System.Action)(() =>
             {
-                mouse_on_bar = true;
-                bar_dragging = true;
+                this.mouse_on_bar = true;
+                this.bar_dragging = true;
 
             }));
             scroller.SetActive(true);
@@ -151,6 +157,7 @@ namespace TheSpaceRoles
         public float ac = 0.2f;
         public void Update()
         {
+            var size_y_ = size_y is float.NaN ? 0 : size_y;
             try
             {
 
@@ -169,7 +176,7 @@ namespace TheSpaceRoles
                     {
 
                         bar_dragging = true;
-                        scroll_pos = (-GetMouse.y + 2) / 4;
+                        scroll_pos = (-GetMouse.y+4) / 4;
                         if (scroll_pos < 0)
                         {
                             scroll_pos = 0;
@@ -186,7 +193,11 @@ namespace TheSpaceRoles
                 }
                 if (Helper.InArea(GetMouse, StartPos, EndPos))
                 {
-                    scroll_pos += Input.mouseScrollDelta.y * ac / size_y;
+                    if (size_y_ != 0)
+                    {
+                        scroll_pos -= Input.mouseScrollDelta.y * ac / size_y_;
+
+                    }
 
 
                 }
@@ -198,9 +209,18 @@ namespace TheSpaceRoles
                 {
                     scroll_pos = 1;
                 }
+                //StartPPos
+                var height = Mathf.Abs(StartPos.y - EndPos.y);
+                if(targetStartPos_y + scroll_pos * (size_y_) - height < 0)
+                {
 
-                Target.transform.position = new Vector3(Target.transform.position.x, targetStartPos_y + scroll_pos * (size_y), Target.transform.position.z);
-                
+                }
+                else
+                {
+
+                    Target.transform.localPosition = new Vector3(Target.transform.localPosition.x, targetStartPos_y + scroll_pos * (size_y_)-height, Target.transform.localPosition.z);
+
+                }
 
 
                 scroller.transform.localPosition =   new Vector3(ScrollPosition.x, ScrollPosition.y + 2 - (scroll_pos * 4), ScrollPosition.z - 1);
@@ -219,14 +239,14 @@ namespace TheSpaceRoles
     {
         public static void Postfix()
         {
-            foreach(var scroll in ScrollerP.scrollers)
+            foreach (var scroll in ScrollerP.scrollers)
             {
                 try
                 {
 
-                    if (scroll?.parent_?.transform?.parent?.gameObject?.active != null || scroll.parent_.transform.parent.gameObject.active)
+                    if (scroll?.parent_?.transform?.parent?.gameObject?.active != null && scroll.parent_.transform.parent.gameObject.active)
                     {
-                        if (scroll?.parent_?.transform?.parent?.gameObject?.active != null || scroll.parent_.transform.parent.parent.gameObject.active)
+                        if (scroll?.parent_?.transform?.parent?.gameObject?.active != null && scroll.parent_.transform.parent.parent.gameObject.active)
                         {
 
                             scroll.Update();

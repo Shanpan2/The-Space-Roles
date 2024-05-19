@@ -16,6 +16,7 @@ namespace TheSpaceRoles
         public bool CanUseDoorlog = true;
         public bool CanUseBinoculars = true;
         public bool CanRepairSabotage = true;
+        public bool CanUseVentMoving = true;
         public bool HasTask = true;
         public string ColoredTeamName => ColoredText(Color, Translation.GetString("team." + Team.ToString() + ".name"));
         public string RoleName => Translation.GetString("team." + Team.ToString() + ".name");

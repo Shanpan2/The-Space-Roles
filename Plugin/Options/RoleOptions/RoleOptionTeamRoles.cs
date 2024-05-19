@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using HarmonyLib;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -7,10 +8,10 @@ using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
 {
-    public class RoleOptionTeamRoles : MonoBehaviour
+    public class RoleOptionTeamRoles
     {
 
-        public static List<RoleOptionTeamRoles> RoleOptionsInTeam = [];
+        public static System.Collections.Generic.List<RoleOptionTeamRoles> RoleOptionsInTeam = [];
         public GameObject @object;
         public TextMeshPro Title_TMP;
         public TextMeshPro Value_TMP;
@@ -18,7 +19,6 @@ namespace TheSpaceRoles
         public Roles role;
         public Teams team;
         public int memberCount = 1;
-        public int num = 0;
         public PassiveButton AddedRoleButton;
         public PassiveButton rbutton;
         public PassiveButton lbutton;
@@ -28,7 +28,7 @@ namespace TheSpaceRoles
             this.role = role;
             this.team = teams;
             @object = new(team.ToString() + "_" + role.ToString());
-            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings").FindChild("AddedRoles"));
+            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings").FindChild("Teams"));
             //var op = @object.AddComponent<RoleOptionBehavior>();
             //op.Set(role, team);
             //optionBehavior.Set(teams: team);
@@ -88,7 +88,6 @@ namespace TheSpaceRoles
             Value_TMP.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Value_TMP.rectTransform.sizeDelta = new Vector2(1f, 0.5f);
 
-            SetCount(1);
 
             var box = @object.AddComponent<BoxCollider2D>();
             box.size = renderer.bounds.size;
@@ -101,6 +100,7 @@ namespace TheSpaceRoles
             AddedRoleButton.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             AddedRoleButton.OnClick.AddListener((System.Action)(() =>
             {
+                RoleOptionsInTeam.Do(x=> { x.CountNone();});
                 RoleOptionsDescription.Set(teams, this.role);
                 RoleOptionOptions.Check(teams,this.role);
 
@@ -165,24 +165,60 @@ namespace TheSpaceRoles
             lbutton.OnMouseOut.AddListener((UnityAction)(() => { left.color = Color.white; }));
             lbutton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
             lbutton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
-            CustomOptionsHolder.CreateRoleOptions(team, role);
+
+                CustomOptionsHolder.CreateRoleOptions(team, role);
+            
 
 
+            if(CustomOption.GetRoleOption("spawncount", role, team).entry.Value < 1)
+            {
+                CustomOption.SetRoleOption("spawncount", role, team, 1);
+                CustomOption.SetRoleOption("spawnrate", role, team, 10);
+
+            }
+            memberCount = CustomOption.GetRoleOption("spawncount", role, team).entry.Value;
+            SetCount(memberCount);
         }
         public void SetCount(int count)
         {
-            if (count > 0)
+            if(CustomOption.GetRoleOption("spawncount", role, team).selection != count)
             {
-                memberCount = count;
-                Value_TMP.text = "x" + memberCount;
-                Value_TMP.m_sharedMaterial = Data.textMaterial;
-                Value_TMP.material = Data.textMaterial;
-                Value_TMP.fontMaterial = Data.textMaterial;
+
+                CustomOption.SetRoleOption("spawncount", role, team, count);
+            }
+            memberCount = count;
+            Value_TMP.text = Translation.GetString("people_count",[memberCount.ToString()]);
+            Value_TMP.m_sharedMaterial = Data.textMaterial;
+            Value_TMP.material = Data.textMaterial;
+            Value_TMP.fontMaterial = Data.textMaterial;
+        }
+        public void CountNone()
+        {
+
+            if (memberCount > 0)
+            {
+
             }
             else
             {
                 Remove();
+                RoleOptionsDescription.SetDescription("", "", "");
+                foreach(var op in CustomOptionsHolder.Options)
+                {
+                    foreach(var opt in op)
+                    {
+                        opt.@object.active = false;
+                    }
+                }
             }
+        }
+        public void CheckCount()
+        {
+            if (CustomOption.GetRoleOption("spawncount", role, team).selection != this.memberCount)
+            {
+                SetCount(CustomOption.GetRoleOption("spawncount", role, team).entry.Value);
+            }
+
         }
         public void SetPos(float num)
         {

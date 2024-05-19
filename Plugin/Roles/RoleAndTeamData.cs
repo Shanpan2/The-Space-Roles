@@ -89,8 +89,9 @@ namespace TheSpaceRoles
     /// </summary>
     public static class GetLink
     {
-        public static List<CustomRole> CustomRoleLink =
+        public static List<CustomRole> CustomRoleLink =>
         [
+            
             new Crewmate(),
             new Impostor(),
             new Sheriff(),
@@ -100,14 +101,14 @@ namespace TheSpaceRoles
             new Madmate(),
         ];
 
-        public static List<CustomRole> CustomRoleNormalLink =
+        public static List<CustomRole> CustomRoleNormalLink =>
         [
             new Crewmate(),
             new Impostor(),
             new Madmate(),
         ];
 
-        public static List<CustomTeam> CustomTeamLink =
+        public static List<CustomTeam> CustomTeamLink =>
         [
             new CrewmateTeam(),
             new ImpostorTeam(),
@@ -116,6 +117,10 @@ namespace TheSpaceRoles
             new MadmateTeam(),
            
         ];
+
+
+
+
 
         /*public static Dictionary<Teams, Color> ColorFromTeams = new()
         {
@@ -156,6 +161,10 @@ namespace TheSpaceRoles
             if (CustomTeamLink.Any(s => s.Team == team))
             {
                 return CustomTeamLink.First(x => x.Team == team).ColoredTeamName;
+            }
+            if((int)team == -1)
+            {
+                return ColoredText(Color.magenta, Translation.GetString("team.additional.name"));
             }
             return ColoredText(Color.magenta, Translation.GetString("team." + team.ToString() + ".name"));
 

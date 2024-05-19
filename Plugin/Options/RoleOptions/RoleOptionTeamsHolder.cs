@@ -19,6 +19,7 @@ namespace TheSpaceRoles
 
                 }
             }
+            _ = new RoleOptionTeams((Teams)(-1), i);
         }
     }
 }

@@ -61,11 +61,12 @@ namespace TheSpaceRoles
             }
 
             var data = tranlatedata[str];
+
             if (data.Length > lang)
             {
                 if (data[lang] == "")
                 {
-                    return data[0];
+                    return data[1];
                 }
                 else
                 {
@@ -74,7 +75,7 @@ namespace TheSpaceRoles
             }
             else
             {
-                return data[0];
+                return data[1];
             }
         }
 

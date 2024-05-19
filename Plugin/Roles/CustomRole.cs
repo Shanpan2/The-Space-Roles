@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using InnerNet;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static TheSpaceRoles.Helper;
@@ -27,6 +28,7 @@ namespace TheSpaceRoles
         public bool? CanUseDoorlog = null;
         public bool? CanUseBinoculars = null;
         public bool? CanRepairSabotage = null;
+        public bool? CanUseVentMoving = null;
         public bool? HasTask = null;
         public void Init()
         {
@@ -37,34 +39,48 @@ namespace TheSpaceRoles
             CanUseDoorlog = CanUseDoorlog == null ? GetLink.GetCustomTeam(Team.Team).CanUseDoorlog : CanUseDoorlog;
             CanUseBinoculars = CanUseBinoculars == null ? GetLink.GetCustomTeam(Team.Team).CanUseBinoculars : CanUseBinoculars;
             CanRepairSabotage = CanRepairSabotage == null ? GetLink.GetCustomTeam(Team.Team).CanUseBinoculars : CanRepairSabotage;
+            CanUseVentMoving = CanUseVentMoving == null ? GetLink.GetCustomTeam(Team.Team).CanUseVentMoving : CanUseVentMoving;
             HasTask = HasTask == null ? GetLink.GetCustomTeam(Team.Team).HasTask : HasTask;
 
         }
         public void ResetStart()
         {
-            ActionBool(HudManager.Instance.ImpostorVentButton, (bool)CanUseVent);
-            ActionBool(HudManager.Instance.KillButton, (bool)HasKillButton);
-            HudManager.Instance.ImpostorVentButton.gameObject.SetActive((bool)CanUseVent);
-            HudManager.Instance.KillButton.gameObject.SetActive((bool)HasKillButton);
+            ActionBool(FastDestroyableSingleton<HudManager>.Instance.ImpostorVentButton, (bool)CanUseVent);
+            ActionBool(FastDestroyableSingleton<HudManager>.Instance.KillButton, (bool)HasKillButton);
         }
         protected void ActionBool(ActionButton button,bool show_hide)
         {
             if(show_hide)
             {
-                button.enabled = true;
-                button.gameObject.SetActive(true);
+                //button.enabled = true;
+                //button.gameObject.SetActive(true);
+                //button.canInteract = true;
+                button.canInteract = true;
+                button.Show();
             }
             else
-                button.enabled = false;
-            button.gameObject.SetActive(false);
             {
+                button.enabled = false;
                 button.Hide();
             }
         }
+        public void VentUpdate()
+        {
+            if ((bool)CanUseVent)
+            {
+                //Vent.currentVent?.SetButtons(true);
+                if (Input.GetKeyDown(KeyCode.V) || KeyboardJoystick.player.GetButtonDown(50))
+                {
+                    HudManager.Instance.ImpostorVentButton.DoClick();
+                }
+            }
+        }
+        private static Vent SetTargetVent(List<Vent> untarget = null, bool forceout = false)
+        {
+            return VentPatch.SetTargetVent(untargetablePlayers: untarget, forceout: forceout);
+        }
         public bool Dead = false;
         public bool Exiled = false;
-
-
 
         public virtual void HudManagerStart(HudManager hudManager) { }
         public virtual void MeetingEnd() { }
@@ -165,6 +181,7 @@ namespace TheSpaceRoles
 
                 DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.Update());
                 DataBase.AllPlayerRoles.Do(y => y.Value.Do(x => x.APUpdate()));
+                DataBase.AllPlayerRoles.Do(y => y.Value.Do(x => x.VentUpdate()));
             }
         }
 

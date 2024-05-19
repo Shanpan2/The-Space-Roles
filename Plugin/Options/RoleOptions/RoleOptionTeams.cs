@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using HarmonyLib;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -20,24 +21,46 @@ namespace TheSpaceRoles
         {
             this.num = num;
             this.teams = team;
-            @object = new GameObject("RoleOptionTeams-" + team.ToString())
+            if((int)team == -1)
             {
-                active = true
-            };
+
+                @object = new GameObject("RoleOptionTeams-Aditional")
+                {
+                    active = true
+                };
+            }
+            else
+            {
+
+                @object = new GameObject("RoleOptionTeams-" + team.ToString())
+                {
+                    active = true
+                };
+            }
             @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("CustomRoleSettings").FindChild("Teams"));
             RoleOptionsManager.SetNums();
             @object.transform.localScale = Vector3.one;
             @object.layer = HudManager.Instance.gameObject.layer;
             var renderer = @object.AddComponent<SpriteRenderer>();
             renderer.sprite = Sprites.GetSpriteFromResources("ui.team_banner_top.png", 400);
-            if (GetLink.CustomTeamLink.Any(x => x.Team == team))
+            try
             {
-                renderer.color = GetLink.ColorFromTeams(team);
+                if (GetLink.CustomTeamLink.Any(x => x.Team == team))
+                {
+                    renderer.color = GetLink.ColorFromTeams(team);
+
+                }
+                else
+                {
+                    if ((int)team == -1)
+
+                        renderer.color = Color.white ;
+                }
 
             }
-            else
+            catch
             {
-                renderer.color = Color.clear;
+                renderer.color = Color.magenta;
             }
 
 
@@ -53,8 +76,16 @@ namespace TheSpaceRoles
             Title_TMP = new GameObject("Title_TMP").AddComponent<TextMeshPro>();
             Title_TMP.transform.SetParent(@object.transform);
             Title_TMP.fontStyle = FontStyles.Bold;
-            Title_TMP.text = GetLink.GetColoredTeamName(team);
-            Title_TMP.color = Color.white;
+            if((int)team <0){
+
+                Title_TMP.text = Translation.GetString("team.additional.name");
+            }
+            else
+            {
+
+                Title_TMP.text = GetLink.GetColoredTeamName(team);
+            }
+            Title_TMP.color = GetLink.GetCustomTeam(team)?.Color!=null? GetLink.GetCustomTeam(team).Color : Color.white;
             Title_TMP.fontSize = Title_TMP.fontSizeMax = 2f;
             Title_TMP.fontSizeMin = 1f;
             Title_TMP.alignment = TextAlignmentOptions.Center;
@@ -78,17 +109,26 @@ namespace TheSpaceRoles
             TeamButton.CachedZ = 0.1f;
             TeamButton.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             TeamButton.OnClick.AddListener((System.Action)(() =>
-            {
-                RoleOptionsDescription.Set(team);
+            {   RoleOptionTeamRoles.RoleOptionsInTeam.Do(x => { x.CountNone(); });
+                RoleOptionsDescription.Set(team); 
                 RoleOptionOptions.Check(Teams.None,Roles.None);
             }));
 
             TeamButton.OnMouseOver.AddListener((System.Action)(() =>
             {
-                Logger.Info(team.ToString());
+                //Logger.Info(team.ToString());
                 if (GetLink.CustomTeamLink.Any(x => x.Team == team))
                 {
                     renderer.color = Helper.ColorEditHSV(GetLink.ColorFromTeams(team), s: -0.2f);
+                }
+                else
+                {
+                    if ((int)team == -1)
+                    {
+
+                        renderer.color = Helper.ColorEditHSV(Color.white, s: -0.2f);
+                    }
+
                 }
             }));
             TeamButton.OnMouseOut.AddListener((System.Action)(() =>
@@ -96,6 +136,11 @@ namespace TheSpaceRoles
                 if (GetLink.CustomTeamLink.Any(x => x.Team == team))
                 {
                     renderer.color = GetLink.ColorFromTeams(team);
+                }
+                else if ((int)team == -1)
+                {
+
+                    renderer.color = Color.white;
                 }
             }));
             TeamButton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
@@ -127,6 +172,8 @@ namespace TheSpaceRoles
             {
                 isEnable = !isEnable;
                 DropDown.sprite = isEnable ? Sprites.GetSpriteFromResources("ui.arrow_drop_down.png", 50) : Sprites.GetSpriteFromResources("ui.arrow_drop_up.png", 50);
+            
+                RoleOptionTeamRoles.RoleOptionsInTeam.Do(x =>  x.CountNone());
                 Logger.Info(isEnable.ToString(), team.ToString());
             }));
 
@@ -160,6 +207,9 @@ namespace TheSpaceRoles
             {
 
                 color = Helper.ColorEditHSV(color, v: -0.6f);
+            }else if ((int)teams == -1)
+            {
+
             }
             renderer.color = color;
         }
@@ -185,11 +235,19 @@ namespace TheSpaceRoles
                     {
                         var renderer = item.@object.GetComponent<SpriteRenderer>();
                         renderer.color = GetLink.CustomTeamLink.Any(x => x.Team == item.teams) ? GetLink.ColorFromTeams(item.teams) : Color.clear;
+                        if ((int)item.teams == -1)
+                        {
+                            renderer.color = Color.white;
+                        }
                     }
                     foreach (var item in RoleOptionTeamRoles.RoleOptionsInTeam)
                     {
                         var renderer = item.@object.GetComponent<SpriteRenderer>();
                         renderer.color = GetLink.CustomTeamLink.Any(x => x.Team == item.team) ? GetLink.ColorFromTeams(item.team) : Color.clear;
+                        if ((int)item.team == -1)
+                        {
+                            renderer.color = Color.white;
+                        }
                     }
                 }
             }

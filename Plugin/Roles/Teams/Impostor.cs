@@ -21,7 +21,7 @@ namespace TheSpaceRoles
         public override bool WinCheck()
         { 
             var v = DataBase.GetPlayerCountInTeam();
-            if (v[Teams.Impostor] >= v[Teams.Crewmate] && v[Teams.Jackal] == 0)
+            if (v[Teams.Impostor] >= DataBase.GetAsCrewmatePlayerCount() && v[Teams.Jackal] == 0)
             {
                 return true;
             }

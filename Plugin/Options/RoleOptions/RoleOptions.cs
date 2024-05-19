@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 using static TheSpaceRoles.Translation;
 using Enum = System.Enum;
 
@@ -63,6 +64,7 @@ namespace TheSpaceRoles
             {
                 RoleOptionsDescription.Set(role);
                 RoleOptionOptions.Check(Teams.None, Roles.None);
+                RoleOptionTeamRoles.RoleOptionsInTeam.Do(x => { x.CountNone(); });
             }));
 
             Button.OnMouseOver.AddListener((System.Action)(() =>
@@ -133,7 +135,7 @@ namespace TheSpaceRoles
                     {
                         if (item.@object.transform == hit2d.transform)
                         {
-                            if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.teams))
+                            if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.teams)||(int)item.teams==-1)
                             {
 
                                 SelectedTeams = item.teams;
@@ -143,7 +145,7 @@ namespace TheSpaceRoles
                         }
                         if (item.DropDown.transform == hit2d.transform)
                         {
-                            if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.teams))
+                            if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.teams) || (int)item.teams == -1)
                             {
 
                                 SelectedTeams = item.teams;
@@ -158,7 +160,7 @@ namespace TheSpaceRoles
                         {
                             if (item.@object.transform.position == hit2d.transform.position)
                             {
-                                if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.team))
+                                if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.team) || (int)item.team == -1)
                                 {
                                     SelectedTeams = item.team;
                                     HoldinggameObject.GetComponent<SpriteRenderer>().color = Helper.ColorEditHSV(GetLink.ColorFromTeams((Teams)item.team), a: 0.8f, v: -0.1f);
@@ -192,6 +194,7 @@ namespace TheSpaceRoles
                 if (HoldinggameObject != null)
                 {
                     if (RoleOptionTeamsHolder.TeamsHolder.Any(x => x.teams == SelectedTeams))
+
                     {
 
                         if (RoleOptionTeamRoles.RoleOptionsInTeam.Any(x => x.role == roles))
@@ -260,8 +263,42 @@ namespace TheSpaceRoles
             foreach (var roleop in RoleOptionTeamsHolder.TeamsHolder)
             {
                 roleop.SetPos(i + team * 1.2f);
+                int count = 0;
+                foreach (var item in RoleOptionTeamRoles.RoleOptionsInTeam)
+                {
+                    if(item.team == roleop.teams){
+                        count += item.memberCount;
+                    }
+                }
                 List<RoleOptionTeamRoles> items = RoleOptionTeamRoles.RoleOptionsInTeam.Where(x => x.team == roleop.teams).ToList();
-                roleop.Title_TMP.text = roleop.teams.ToString() + $"({items.Count})";
+                if(count > 0)
+                {
+
+                    if ((int)roleop.teams == -1)
+                    {
+
+                        roleop.Title_TMP.text = Translation.GetString("team.additional.name") + $" {GetString("people_count", [count.ToString()])}";
+                    }
+                    else
+                    {
+
+                        roleop.Title_TMP.text = GetLink.GetColoredTeamName(roleop.teams) + $" {GetString("people_count", [count.ToString()])}";
+                    }
+                }
+                else
+                {
+
+                    if ((int)roleop.teams == -1)
+                    {
+
+                        roleop.Title_TMP.text = Translation.GetString("team.additional.name");
+                    }
+                    else
+                    {
+
+                        roleop.Title_TMP.text = GetLink.GetColoredTeamName(roleop.teams);
+                    }
+                }
                 if (roleop.isEnable)
                 {
 

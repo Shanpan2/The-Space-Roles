@@ -142,31 +142,46 @@ namespace TheSpaceRoles
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Start)),HarmonyPostfix]
         public static void Start_Postfix(PlayerControl __instance)
         {
-
+            if (HudManager.Instance.transform.FindChild("CustomSettings") != null)
+            {
+                return;
+            }
             var cSettings = new GameObject("CustomSettings");
             cSettings.transform.SetParent(HudManager.Instance.transform);
             cSettings.active = true;
-            cSettings.transform.localPosition = new(0, 0, -160);
+            cSettings.transform.localPosition = new(0, 0, -70);
             var tsrSettings = new GameObject("TSRSettings");
             tsrSettings.transform.SetParent(cSettings.transform);
             tsrSettings.active = false;
+            var selector = new GameObject("Selector");
+            selector.transform.SetParent(tsrSettings.transform);
+            selector.transform.localPosition = Vector3.zero;
+            selector.active = true;
+            var opt = new GameObject("Option");
+            opt.transform.SetParent(tsrSettings.transform);
+            opt.transform.localPosition = Vector3.zero;
+            opt.active = true;
             tsrSettings.transform.localPosition = Vector3.zero;
             var customroleSettings = new GameObject("CustomRoleSettings");
             customroleSettings.transform.SetParent(cSettings.transform);
             customroleSettings.active = false;
             customroleSettings.transform.localPosition = Vector3.zero;
-            var v = new GameObject("Roles");
-            v.transform.SetParent(customroleSettings.transform);
-            v.transform.localPosition = Vector3.zero;
-            v.active = true;
-            var b = new GameObject("Teams");
-            b.transform.SetParent(customroleSettings.transform);
-            b.transform.localPosition = Vector3.zero;
-            b.active = true;
+            var roles = new GameObject("Roles");
+            roles.transform.SetParent(customroleSettings.transform);
+            roles.transform.localPosition = Vector3.zero;
+            roles.active = true;
+            var teams = new GameObject("Teams");
+            teams.transform.SetParent(customroleSettings.transform);
+            teams.transform.localPosition = Vector3.zero;
+            teams.active = true;
             var added = new GameObject("AddedRoles");
             added.transform.SetParent(customroleSettings.transform);
             added.transform.localPosition = Vector3.zero;
             added.active = true;
+            var desc = new GameObject("Description");
+            desc.transform.SetParent(customroleSettings.transform);
+            desc.transform.localPosition = Vector3.zero;
+            desc.active = true;
             var n = new GameObject("E");
             n.transform.SetParent(customroleSettings.transform);
             n.transform.localPosition = Vector3.zero;
@@ -175,16 +190,36 @@ namespace TheSpaceRoles
             CustomOptionsHolder.CreateCustomOptions();
             CustomOptionsHolder.AllCheck();
             RoleOptionsDescription.StartExplain();
-            RoleOptionsHolder.RoleOptionsCreate(ref v,ref customroleSettings);
+            RoleOptionsHolder.RoleOptionsCreate();
             RoleOptionTeamsHolder.Create();
-        }
 
+            _ = new ScrollerP("OptSel_Scroller", ref selector, ref tsrSettings, new(-3, 5, 0), new(-5, -5, 0), new(-4.5f, -0.5f, 0), CustomOptionSelector.selectors.Count * 1f);
+
+            _ = new ScrollerP("Role_Scroller", ref roles, ref customroleSettings, new(-5, 5, 0), new(-7, -5, 0), new(-3.45f, -0.5f, 0),RoleOptionsHolder.roleOptions.Count * 0.36f);
+            _ = new ScrollerP("Team_Scroller", ref teams, ref customroleSettings, new(-3, 5, 0), new(-5, -5, 0), new(-0.5f, -0.5f, 0), RoleOptionTeamsHolder.TeamsHolder.Count * 0.36f);
+            
+            _ = new ScrollerP("Description_Scroller", ref desc, ref customroleSettings, new(-3, 5, 0), new(-5, -5, 0), new(5f, -0.5f, 0),CustomOptionsHolder.RoleOptions.Where(x => x.role == RoleOptionOptions.nowRole && x.team == RoleOptionOptions.nowTeam).ToList().Count  * 0.36f+1.8f);
+
+            optsc = new ScrollerP("Opt_Scroller", ref opt, ref tsrSettings, new(1, 5, 0), new(5, -5, 0), new(0f, -0.5f, 0), ( CustomOptionsHolder.TSROptions.Where(x => x.obj_parent == CustomOptionSelector.Select).Count() ) * 0.38f+0);
+
+        }
+        public static ScrollerP optsc;
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame)),HarmonyPostfix]
-        public static void End_Postfix(PlayerControl __instance)
+        public static void End_Postfix()
         {
             CustomOptionSelector.selectors = [];
             CustomOptionsHolder.Options.Do(x => x = []); 
             RoleOptionsHolder.roleOptions=[];
+            RoleOptionTeamsHolder.TeamsHolder = [];
+            RoleOptionTeamRoles.RoleOptionsInTeam = [];
+
+        }
+        [HarmonyPatch(typeof(GameManager), nameof(GameManager.EndGame)), HarmonyPostfix]
+        public static void Endgame_Postfix()
+        {
+            CustomOptionSelector.selectors = [];
+            CustomOptionsHolder.Options.Do(x => x = []);
+            RoleOptionsHolder.roleOptions = [];
             RoleOptionTeamsHolder.TeamsHolder = [];
             RoleOptionTeamRoles.RoleOptionsInTeam = [];
 
@@ -199,6 +234,64 @@ namespace TheSpaceRoles
     }
     public class CustomOption
     {
+        public static CustomOption GetOption(string option)
+        {
+            foreach (var item in CustomOptionsHolder.Options)
+            {
+                foreach (var item1 in item)
+                {
+                    if (item1.name == option)
+                    {
+                        return item1;
+                    }
+                }
+            }
+            return null;
+        }
+        public static void SetOption(string option, int i)
+        {
+            foreach (var item in CustomOptionsHolder.Options)
+            {
+                foreach (var item1 in item)
+                {
+                    if (item1.name == option)
+                    {
+                        item1.UpdateSelection(i);
+                        return;
+                    }
+                }
+            }
+            return;
+        }
+        public static CustomOption GetRoleOption(string option,Roles roles,Teams teams)
+        {
+            foreach (var item in CustomOptionsHolder.Options)
+            {
+                foreach (var item1 in item)
+                {
+                    if (item1.name == option && item1.team == teams && item1.role == roles)
+                    {
+                        return item1;
+                    }
+                }
+            }
+            return null;
+        }
+        public static void SetRoleOption(string option,Roles roles,Teams teams, int i)
+        {
+            foreach (var item in CustomOptionsHolder.Options)
+            {
+                foreach (var item1 in item)
+                {
+                    if (item1.name== option&&item1.team==teams&&item1.role==roles)
+                    {
+                        item1.UpdateSelection(i);
+                        return;
+                    }
+                }
+            }
+            return;
+        }
         public static int preset = 0;
         public string GetName() =>this.CustomSetting == CustomSetting.TSRSettings ? Translation.GetString("option." + name) : Translation.GetString("roption." + name);
         //public string GetSelectionName() => Translation.GetString("option.selection.sec", [selections[selection].ToString()]);
@@ -213,7 +306,7 @@ namespace TheSpaceRoles
             var csetting = HudManager.Instance.transform.FindChild("CustomSettings");
             return setting switch
             {
-                CustomSetting.TSRSettings => csetting.FindChild("TSRSettings").FindChild(parent.ToString()).FindChild("E"),
+                CustomSetting.TSRSettings => csetting.FindChild("TSRSettings").FindChild("Option"),
                 CustomSetting.RoleSettings => csetting.FindChild("CustomRoleSettings").FindChild("E"),
                 _ => csetting.FindChild("CustomRoleSettings"),
             }; ;
@@ -258,7 +351,7 @@ namespace TheSpaceRoles
 
             if (this.CustomSetting == CustomSetting.TSRSettings)
             {
-                entry = TSR.Instance.Config.Bind($"Preset{preset}", name, defaultSelection);
+                entry = TSR.Instance.Config.Bind($"Preset{preset}", name, defaultSelection); 
             }
             else
             {
@@ -387,23 +480,34 @@ namespace TheSpaceRoles
         public static Func<int, bool> funcOff = x => x == 0;
 
 
-        public static CustomOption TSRCreate(CustomOptionSelectorSetting parent, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static void TSRCreate(CustomOptionSelectorSetting parent, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(CustomSetting.TSRSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, parent);
+            if (CustomOptionsHolder.TSROptions.Any(x => x.name == name)) return;
+
+                var v = new CustomOption(CustomSetting.TSRSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, parent);
+                CustomOptionsHolder.TSROptions.Add(v);
+            
         }
-        public static CustomOption TSRCreate(CustomOptionSelectorSetting parent, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static void TSRCreate(CustomOptionSelectorSetting parent, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(CustomSetting.TSRSettings, name, selections, selection, parentId, func, onChange, parent);
+            if (CustomOptionsHolder.TSROptions.Any(x => x.name == name)) return;
+            var v = new CustomOption(CustomSetting.TSRSettings, name, selections, selection, parentId, func, onChange, parent);
+            CustomOptionsHolder.TSROptions.Add(v);
         }
 
 
-        public static CustomOption RoleCreate(Teams teams, Roles roles, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static void RoleCreate(Teams teams, Roles roles, string name, bool DefaultValue = false, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(CustomSetting.RoleSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, role: roles, team: teams);
+            if (CustomOptionsHolder.RoleOptions.Any(x => x.name == name && x.team == teams && x.role == roles)) return;
+            var v = new CustomOption(CustomSetting.RoleSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, role: roles, team: teams);
+            CustomOptionsHolder.RoleOptions.Add(v);
         }
-        public static CustomOption RoleCreate(Teams teams, Roles roles, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
+        public static void RoleCreate(Teams teams, Roles roles, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            return new CustomOption(CustomSetting.RoleSettings, name, selections, selection, parentId, func, onChange, role: roles, team: teams);
+            if (CustomOptionsHolder.RoleOptions.Any(x => x.name == name&&x.team==teams&&x.role==roles)) return;
+
+            var v = new CustomOption(CustomSetting.RoleSettings, name, selections, selection, parentId, func, onChange, role: roles, team: teams);
+            CustomOptionsHolder.RoleOptions.Add(v);
         }
 
 
@@ -422,13 +526,14 @@ namespace TheSpaceRoles
             {
                 RoleOptionOptions.Check(this.team, this.role);
             }
+            onChange?.Invoke();
         }
         public void Check( float i)
         {
             Value_TMP.text = GetSelectionName();
             if (func == null || parentId == null)
             {
-                @object.transform.localPosition = new Vector3(3, 2f - 0.5f * i, 0);
+                @object.transform.localPosition = new Vector3(3, 2f - 0.48f * i, 0);
                 i++;
             }
             else
