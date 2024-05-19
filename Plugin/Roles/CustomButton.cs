@@ -278,41 +278,47 @@ namespace TheSpaceRoles
             OnMeetingEnds?.Invoke();
         }
     }
-    [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
-    public static class HudUpdate
-    {
-        public static void Prefix(HudManager __instance)
-        {
-            if (DataBase.buttons.Count == 0) return;
-            DataBase.buttons.Do(x => x.HudUpdate());
-        }
-    }
     [HarmonyPatch]
-    public static class MeetingHudPatch
+    public static class CustomButtonstatic
     {
 
-        [HarmonyPatch(typeof(MeetingIntroAnimation))]
-        [HarmonyPatch(nameof(MeetingIntroAnimation.Start))]
-        public static void Prefix()
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
+        public static class HudUpdate
+        {
+            public static void Prefix(HudManager __instance)
+            {
+                if (DataBase.buttons.Count == 0) return;
+                DataBase.buttons.Do(x => x.HudUpdate());
+            }
+        }
+        [HarmonyPatch]
+        public static class MeetingHudPatch
         {
 
-            if (DataBase.buttons.Count == 0) return;
-            DataBase.buttons.Do(x => x.MeetingStarts());
+            [HarmonyPatch(typeof(MeetingIntroAnimation))]
+            [HarmonyPatch(nameof(MeetingIntroAnimation.Start))]
+            public static void Prefix()
+            {
+
+                if (DataBase.buttons.Count == 0) return;
+                DataBase.buttons.Do(x => x.MeetingStarts());
+
+            }
 
         }
 
-    }
-
-    [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp))]
-    public static class WrapUpPatch
-    {
-        public static void Prefix()
+        [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp))]
+        public static class WrapUpPatch
         {
+            public static void Prefix()
+            {
 
-            if (DataBase.buttons.Count == 0) return;
-            DataBase.buttons.Do(x => x.MeetingEnds());
+                if (DataBase.buttons.Count == 0) return;
+                DataBase.buttons.Do(x => x.MeetingEnds());
+            }
         }
     }
+
 
 
 }

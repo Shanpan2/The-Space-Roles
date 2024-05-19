@@ -76,6 +76,22 @@ namespace TheSpaceRoles
             }
             return result;
         }
+        /// <summary>
+        /// Impostor,Jackalじゃないやつの総数
+        /// </summary>
+        /// <returns></returns>
+        public static int GetAsCrewmatePlayerCount()
+        {
+            int i = 0;
+            foreach (var p in AllPlayerRoles)
+            {
+                if (p.Value.Any(x => !x.Dead) && p.Value[0].Role!=Roles.Impostor&& p.Value[0].Role != Roles.Jackal)
+                {
+                    i++;
+                }
+            }
+            return i;
+        }
         public static int AlivingNotKillPlayer()
         {
             int i = 0;
