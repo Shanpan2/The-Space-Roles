@@ -99,6 +99,7 @@ namespace TheSpaceRoles
             new Vampire(),
             new SerialKiller(),
             new Madmate(),
+            new Jackal(),
         ];
 
         public static List<CustomRole> CustomRoleNormalLink =>
@@ -106,6 +107,7 @@ namespace TheSpaceRoles
             new Crewmate(),
             new Impostor(),
             new Madmate(),
+            new Jackal(),
         ];
 
         public static List<CustomTeam> CustomTeamLink =>
