@@ -1,13 +1,9 @@
-﻿using System.Linq;
-using TMPro;
-using UnityEngine;
-using UnityEngine.UIElements.UIR;
-using XUnity.Common.Extensions;
+﻿using UnityEngine;
 using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
 {
-    public class SerialKiller: CustomRole
+    public class SerialKiller : CustomRole
     {
         public float Timer = 60f;
         public float Maxtimer = 60f;
@@ -24,7 +20,7 @@ namespace TheSpaceRoles
         public override void HudManagerStart(HudManager __instance)
         {
             SerialKillerKillButton = new CustomButton(
-                __instance,"SerialKillerButton"
+                __instance, "SerialKillerButton"
                 ,
                 ButtonPos.Kill,
                 KeyCode.Q,
@@ -39,7 +35,8 @@ namespace TheSpaceRoles
                     Timer = Maxtimer;
 
                 },
-                () => { 
+                () =>
+                {
                     SerialKillerKillButton.Timer = SerialKillerKillButton.maxTimer;
                 },
                 "Kill",
@@ -56,9 +53,9 @@ namespace TheSpaceRoles
                 Timer -= Time.deltaTime;
                 if (Timer <= 0)
                 {
-                    UnCheckedMurderPlayer.RpcMurder(PlayerControl.LocalPlayer,PlayerControl.LocalPlayer, DeathReason.SerialKillerSuicide);
+                    UnCheckedMurderPlayer.RpcMurder(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer, DeathReason.SerialKillerSuicide);
                 }
-                
+
             }
             SerialKillerKillButton.AddtionalText.text = Translation.GetString("role.serialkiller.timer_remain", [((int)Timer).ToString()]);
 

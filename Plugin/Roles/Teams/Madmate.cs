@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using UnityEngine.UIElements;
-
-namespace TheSpaceRoles
+﻿namespace TheSpaceRoles
 {
     public class MadmateTeam : CustomTeam
     {
@@ -26,7 +23,7 @@ namespace TheSpaceRoles
         }
         public override bool AdditionalWinCheck(Teams winteam)
         {
-            return winteam==Teams.Impostor;
+            return winteam == Teams.Impostor;
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using AmongUs.GameOptions;
-using HarmonyLib;
-using Il2CppSystem.Reflection;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Networking.Types;
 
 namespace TheSpaceRoles
 {
@@ -16,8 +12,8 @@ namespace TheSpaceRoles
         Use = 0,
         Report,
         Sabotage,
-        Vent,
         Kill,
+        Vent,
         Custom,
 
     }
@@ -42,7 +38,7 @@ namespace TheSpaceRoles
             _ => new Vector2(-3, 3),
         };
 
-        public string name;
+        public string Name;
         public ActionButton actionButton;
         public HudManager hudManager;
         public ButtonPos ButtonPosition;
@@ -59,7 +55,7 @@ namespace TheSpaceRoles
         public bool atFirsttime;
         public TextMeshPro AddtionalText;
 
-                public Sprite sprite;
+        public Sprite sprite;
         public KeyCode keyCode;
         public Action OnClick;
         public Action OnMeetingEnds;
@@ -89,8 +85,8 @@ namespace TheSpaceRoles
             Action OnEffectEnd = null
             )
         {
-            this.name = name;
-            this.ButtonPosition= buttonPos;
+            this.Name = name;
+            this.ButtonPosition = buttonPos;
             this.hudManager = hudManager;
             this.keyCode = keycode;
             this.OnClick = Onclick;
@@ -126,7 +122,7 @@ namespace TheSpaceRoles
             catch (Exception ex) { Logger.Error(ex.ToString()); }
 
 
-            
+
             var gameob = new GameObject("Text");
             gameob.transform.SetParent(actionButton.transform);
             gameob.SetActive(true);
@@ -316,6 +312,11 @@ namespace TheSpaceRoles
                 if (DataBase.buttons.Count == 0) return;
                 DataBase.buttons.Do(x => x.MeetingEnds());
             }
+        }
+        [HarmonyPatch]
+        public static class ActionButtonPatch
+        {
+
         }
     }
 

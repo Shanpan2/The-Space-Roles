@@ -1,11 +1,23 @@
 ﻿using HarmonyLib;
 using Hazel;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheSpaceRoles
 {
     public static class CheckedMurderPlayer
     {
+        public static void HappenedKill(int source, int target, DeathReason reason)
+        {
+
+            if (source == PlayerControl.LocalPlayer.PlayerId)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.Killed());
+            }
+            if (target == PlayerControl.LocalPlayer.PlayerId)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.WasKilled());
+                DataBase.buttons.Do(x => x.actionButton.Hide());
+            }
+        }
         public static void Murder(int id1, int id2, DeathReason reason)
         {
 
@@ -19,14 +31,7 @@ namespace TheSpaceRoles
 
                 Logger.Info($"Death, reason:{reason}");
             }*/
-            if (id1== PlayerControl.LocalPlayer.PlayerId)
-            {
-                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.Killed());
-            }
-            if (id2== PlayerControl.LocalPlayer.PlayerId)
-            {
-                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.WasKilled());
-            }
+            HappenedKill(id1, id2, reason);
         }
         public static void RpcMurder(PlayerControl source, PlayerControl target, DeathReason reason, bool DoCustomRpcMurder = true)
         {
@@ -45,7 +50,7 @@ namespace TheSpaceRoles
         public static void Murder(int id1, int id2, DeathReason reason)
         {
             KillAnimationPatch.AnimCancel = true;
-            Helper.GetPlayerControlFromId(id1).MurderPlayer(Helper.GetPlayerControlFromId(id2),MurderResultFlags.Succeeded);
+            Helper.GetPlayerControlFromId(id1).MurderPlayer(Helper.GetPlayerControlFromId(id2), MurderResultFlags.Succeeded);
             /*
             DataBase.AllPlayerDeathReasons.Add(id2, reason);
             if (id2 == PlayerControl.LocalPlayer.PlayerId)
@@ -54,14 +59,7 @@ namespace TheSpaceRoles
 
                 Logger.Info($"Death, reason:{reason}");
             }*/
-            if (id1 == PlayerControl.LocalPlayer.PlayerId)
-            {
-                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.Killed());
-            }
-            if (id2 == PlayerControl.LocalPlayer.PlayerId)
-            {
-                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.WasKilled());
-            }
+            CheckedMurderPlayer.HappenedKill(id1, id2, reason);
         }
         public static void RpcMurder(PlayerControl source, PlayerControl target, DeathReason reason, bool DoCustomRpcMurder = true)
         {

@@ -3,7 +3,6 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Collections.Generic;
 using UnityEngine;
-using static TheSpaceRoles.EnumerationHelpers;
 
 namespace TheSpaceRoles
 {

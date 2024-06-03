@@ -4,7 +4,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 using static TheSpaceRoles.Translation;
 using Enum = System.Enum;
 
@@ -135,7 +134,7 @@ namespace TheSpaceRoles
                     {
                         if (item.@object.transform == hit2d.transform)
                         {
-                            if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.teams)||(int)item.teams==-1)
+                            if (GetLink.GetCustomRole(roles).teamsSupported.Contains(item.teams) || (int)item.teams == -1)
                             {
 
                                 SelectedTeams = item.teams;
@@ -266,12 +265,13 @@ namespace TheSpaceRoles
                 int count = 0;
                 foreach (var item in RoleOptionTeamRoles.RoleOptionsInTeam)
                 {
-                    if(item.team == roleop.teams){
+                    if (item.team == roleop.teams)
+                    {
                         count += item.memberCount;
                     }
                 }
                 List<RoleOptionTeamRoles> items = RoleOptionTeamRoles.RoleOptionsInTeam.Where(x => x.team == roleop.teams).ToList();
-                if(count > 0)
+                if (count > 0)
                 {
 
                     if ((int)roleop.teams == -1)

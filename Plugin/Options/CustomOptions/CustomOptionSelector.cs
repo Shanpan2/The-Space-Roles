@@ -4,7 +4,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.XR;
 
 namespace TheSpaceRoles
 {
@@ -21,7 +20,7 @@ namespace TheSpaceRoles
         {
             this.Setting = setting;
             @object = new(setting.ToString());
-            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("TSRSettings").FindChild("Selector"));           
+            @object.transform.SetParent(HudManager.Instance.transform.FindChild("CustomSettings").FindChild("TSRSettings").FindChild("Selector"));
             @object.transform.localPosition = new Vector3(-3f, 1.5f - (float)setting * 1f, -1);
             @object.layer = HudManager.Instance.gameObject.layer;
             var renderer = @object.AddComponent<SpriteRenderer>();
@@ -41,10 +40,10 @@ namespace TheSpaceRoles
             {
                 selectors.First(x => x.Setting == Select).Check();
                 CustomOptionsHolder.TSROptions.Do(x => x.@object.gameObject.active = false);
-                CustomOptionsHolder.TSROptions.Where(x => x.obj_parent == setting).Do(x =>x.@object.gameObject.active = true);
+                CustomOptionsHolder.TSROptions.Where(x => x.obj_parent == setting).Do(x => x.@object.gameObject.active = true);
 
                 Select = Setting;
-                
+
                 CustomOptionsHolder.AllCheck();
             }));
 

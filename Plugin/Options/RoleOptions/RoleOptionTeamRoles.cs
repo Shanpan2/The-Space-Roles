@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -100,9 +99,9 @@ namespace TheSpaceRoles
             AddedRoleButton.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             AddedRoleButton.OnClick.AddListener((System.Action)(() =>
             {
-                RoleOptionsInTeam.Do(x=> { x.CountNone();});
+                RoleOptionsInTeam.Do(x => { x.CountNone(); });
                 RoleOptionsDescription.Set(teams, this.role);
-                RoleOptionOptions.Check(teams,this.role);
+                RoleOptionOptions.Check(teams, this.role);
 
             }));
 
@@ -166,11 +165,11 @@ namespace TheSpaceRoles
             lbutton.HoverSound = HudManager.Instance.Chat.GetComponentsInChildren<ButtonRolloverHandler>().FirstOrDefault().HoverSound;
             lbutton.ClickSound = HudManager.Instance.Chat.quickChatMenu.closeButton.ClickSound;
 
-                CustomOptionsHolder.CreateRoleOptions(team, role);
-            
+            CustomOptionsHolder.CreateRoleOptions(team, role);
 
 
-            if(CustomOption.GetRoleOption("spawncount", role, team).entry.Value < 1)
+
+            if (CustomOption.GetRoleOption("spawncount", role, team).entry.Value < 1)
             {
                 CustomOption.SetRoleOption("spawncount", role, team, 1);
                 CustomOption.SetRoleOption("spawnrate", role, team, 10);
@@ -181,13 +180,13 @@ namespace TheSpaceRoles
         }
         public void SetCount(int count)
         {
-            if(CustomOption.GetRoleOption("spawncount", role, team).selection != count)
+            if (CustomOption.GetRoleOption("spawncount", role, team).selection != count)
             {
 
                 CustomOption.SetRoleOption("spawncount", role, team, count);
             }
             memberCount = count;
-            Value_TMP.text = Translation.GetString("people_count",[memberCount.ToString()]);
+            Value_TMP.text = Translation.GetString("people_count", [memberCount.ToString()]);
             Value_TMP.m_sharedMaterial = Data.textMaterial;
             Value_TMP.material = Data.textMaterial;
             Value_TMP.fontMaterial = Data.textMaterial;
@@ -203,9 +202,9 @@ namespace TheSpaceRoles
             {
                 Remove();
                 RoleOptionsDescription.SetDescription("", "", "");
-                foreach(var op in CustomOptionsHolder.Options)
+                foreach (var op in CustomOptionsHolder.Options)
                 {
-                    foreach(var opt in op)
+                    foreach (var opt in op)
                     {
                         opt.@object.active = false;
                     }

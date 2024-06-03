@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.Events;
 
 namespace TheSpaceRoles
@@ -25,7 +24,7 @@ namespace TheSpaceRoles
         public bool mouse_on_bar = false;
         public float size_y;
 
-        public ScrollerP(string Scrollname, ref GameObject target_,ref GameObject parent,Vector3 startPos,Vector3 endPos,Vector3 Pos, float size_y)
+        public ScrollerP(string Scrollname, ref GameObject target_, ref GameObject parent, Vector3 startPos, Vector3 endPos, Vector3 Pos, float size_y)
         {
 
 
@@ -95,10 +94,10 @@ namespace TheSpaceRoles
             box.size = renderer.bounds.size;
             scrollbar_passiveButton.OnMouseOver = new UnityEvent();
             scrollbar_passiveButton.OnMouseOut = new UnityEvent();
-            scrollbar_passiveButton.OnClick = new ();
+            scrollbar_passiveButton.OnClick = new();
             scrollbar_passiveButton._CachedZ_k__BackingField = 0.1f;
             scrollbar_passiveButton.CachedZ = 0.1f;
-            scrollbar_passiveButton.Colliders = new[] {box };
+            scrollbar_passiveButton.Colliders = new[] { box };
 
             scrollbar.SetActive(true);
             scrollbar_passiveButton.OnMouseOver.AddListener((System.Action)(() =>
@@ -152,7 +151,7 @@ namespace TheSpaceRoles
         }
         public float targetStartPos_y = 0;
         private static Vector3 GetMouse => Camera.allCameras.First(x => x.name == "UI Camera").ScreenToWorldPoint(Input.mousePosition);
-        public bool bar_dragging=false;
+        public bool bar_dragging = false;
         public float scroll_pos = 0;
         public float ac = 0.2f;
         public void Update()
@@ -176,7 +175,7 @@ namespace TheSpaceRoles
                     {
 
                         bar_dragging = true;
-                        scroll_pos = (-GetMouse.y+4) / 4;
+                        scroll_pos = (-GetMouse.y + 4) / 4;
                         if (scroll_pos < 0)
                         {
                             scroll_pos = 0;
@@ -211,19 +210,19 @@ namespace TheSpaceRoles
                 }
                 //StartPPos
                 var height = Mathf.Abs(StartPos.y - EndPos.y);
-                if(targetStartPos_y + scroll_pos * (size_y_) - height < 0)
+                if (targetStartPos_y + scroll_pos * (size_y_) - height < 0)
                 {
 
                 }
                 else
                 {
 
-                    Target.transform.localPosition = new Vector3(Target.transform.localPosition.x, targetStartPos_y + scroll_pos * (size_y_)-height, Target.transform.localPosition.z);
+                    Target.transform.localPosition = new Vector3(Target.transform.localPosition.x, targetStartPos_y + scroll_pos * (size_y_) - height, Target.transform.localPosition.z);
 
                 }
 
 
-                scroller.transform.localPosition =   new Vector3(ScrollPosition.x, ScrollPosition.y + 2 - (scroll_pos * 4), ScrollPosition.z - 1);
+                scroller.transform.localPosition = new Vector3(ScrollPosition.x, ScrollPosition.y + 2 - (scroll_pos * 4), ScrollPosition.z - 1);
 
 
 

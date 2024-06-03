@@ -21,6 +21,7 @@ public class TSR : BasePlugin
 
     public static TSR Instance;
     public static ConfigEntry<bool> LobbyTimer { get; set; }
+    public static ConfigEntry<bool> DebugMode { get; set; }
 
     public override void Load()
     {
@@ -31,6 +32,7 @@ public class TSR : BasePlugin
         // Plugin startup logic
         TheSpaceRoles.Logger.Info($"Plugin {Id} is loaded!");
         LobbyTimer = Config.Bind("Lobby", "LobbyTimer", true, "ロビータイマーを使うか");
+        DebugMode = Config.Bind("Debug", "DebugMode", false, "デバッグモードを使うか");
         Instance = new TSR();
     }
 

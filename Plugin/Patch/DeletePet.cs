@@ -7,7 +7,7 @@ namespace TheSpaceRoles
     {
         public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl player)
         {
-           /* player.RpcSetPet("");*/
+            /* player.RpcSetPet("");*/
         }
     }
     [HarmonyPatch(typeof(PetBehaviour), nameof(PetBehaviour.SetMourning))]

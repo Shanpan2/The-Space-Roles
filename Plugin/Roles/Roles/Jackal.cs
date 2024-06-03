@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
-using UnityEngine.UIElements.UIR;
+﻿using UnityEngine;
 using static TheSpaceRoles.Helper;
 namespace TheSpaceRoles
 {
@@ -13,7 +11,7 @@ namespace TheSpaceRoles
             teamsSupported = [Teams.Jackal];
             Role = Roles.Jackal;
             Color = ColorFromColorcode("#00b4eb");
-            CanUseVent=true;
+            CanUseVent = true;
             //HasKillButton = true;
         }
         public override void HudManagerStart(HudManager __instance)
@@ -27,7 +25,7 @@ namespace TheSpaceRoles
                 ButtonPos.Kill,
                 KeyCode.Q,
                 30,
-                () => KillButtons.KillButtonSetTarget(2.5f, Color, notIncludeTeamIds:[Teams.Jackal]),
+                () => KillButtons.KillButtonSetTarget(2.5f, Color, notIncludeTeamIds: [Teams.Jackal]),
                 __instance.KillButton.graphic.sprite,
                 () =>
                 {

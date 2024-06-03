@@ -2,7 +2,6 @@
 using InnerNet;
 using System.Collections.Generic;
 using UnityEngine;
-using Hazel;
 
 namespace TheSpaceRoles.Plugin
 {
@@ -22,17 +21,17 @@ namespace TheSpaceRoles.Plugin
         public static int undocount = 1;
 
         public static List<string> chattexts = new List<string>();
-        [HarmonyPatch(typeof(PlayerControl),nameof(PlayerControl.FixedUpdate))]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
         [HarmonyPostfix]
-        public static void player_Postfix() 
+        public static void player_Postfix()
         {
 
             //Debug
-            if (Input.GetKeyDown(KeyCode.N))
+            if (TSR.DebugMode.Value && Input.GetKeyDown(KeyCode.N))
             {
                 Logger.Info("N");
                 KillAnimationPatch.AnimCancel = true;
-                HudManager.Instance.KillOverlay.ShowKillAnimation(PlayerControl.AllPlayerControls[Helper.Random(0, PlayerControl.AllPlayerControls.Count-1)].Data, PlayerControl.LocalPlayer.Data);
+                HudManager.Instance.KillOverlay.ShowKillAnimation(PlayerControl.AllPlayerControls[Helper.Random(0, PlayerControl.AllPlayerControls.Count - 1)].Data, PlayerControl.LocalPlayer.Data);
             }
         }
 

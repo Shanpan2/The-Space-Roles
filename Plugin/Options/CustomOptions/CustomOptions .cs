@@ -139,7 +139,7 @@ namespace TheSpaceRoles
     [HarmonyPatch]
     class GameSetting
     {
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Start)),HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Start)), HarmonyPostfix]
         public static void Start_Postfix(PlayerControl __instance)
         {
             if (HudManager.Instance.transform.FindChild("CustomSettings") != null)
@@ -195,21 +195,21 @@ namespace TheSpaceRoles
 
             _ = new ScrollerP("OptSel_Scroller", ref selector, ref tsrSettings, new(-3, 5, 0), new(-5, -5, 0), new(-4.5f, -0.5f, 0), CustomOptionSelector.selectors.Count * 1f);
 
-            _ = new ScrollerP("Role_Scroller", ref roles, ref customroleSettings, new(-5, 5, 0), new(-7, -5, 0), new(-3.45f, -0.5f, 0),RoleOptionsHolder.roleOptions.Count * 0.36f);
+            _ = new ScrollerP("Role_Scroller", ref roles, ref customroleSettings, new(-5, 5, 0), new(-7, -5, 0), new(-3.45f, -0.5f, 0), RoleOptionsHolder.roleOptions.Count * 0.36f);
             _ = new ScrollerP("Team_Scroller", ref teams, ref customroleSettings, new(-3, 5, 0), new(-5, -5, 0), new(-0.5f, -0.5f, 0), RoleOptionTeamsHolder.TeamsHolder.Count * 0.36f);
-            
-            _ = new ScrollerP("Description_Scroller", ref desc, ref customroleSettings, new(-3, 5, 0), new(-5, -5, 0), new(5f, -0.5f, 0),CustomOptionsHolder.RoleOptions.Where(x => x.role == RoleOptionOptions.nowRole && x.team == RoleOptionOptions.nowTeam).ToList().Count  * 0.36f+1.8f);
 
-            optsc = new ScrollerP("Opt_Scroller", ref opt, ref tsrSettings, new(1, 5, 0), new(5, -5, 0), new(0f, -0.5f, 0), ( CustomOptionsHolder.TSROptions.Where(x => x.obj_parent == CustomOptionSelector.Select).Count() ) * 0.38f+0);
+            _ = new ScrollerP("Description_Scroller", ref desc, ref customroleSettings, new(-3, 5, 0), new(-5, -5, 0), new(5f, -0.5f, 0), CustomOptionsHolder.RoleOptions.Where(x => x.role == RoleOptionOptions.nowRole && x.team == RoleOptionOptions.nowTeam).ToList().Count * 0.36f + 1.8f);
+
+            optsc = new ScrollerP("Opt_Scroller", ref opt, ref tsrSettings, new(1, 5, 0), new(5, -5, 0), new(0f, -0.5f, 0), (CustomOptionsHolder.TSROptions.Where(x => x.obj_parent == CustomOptionSelector.Select).Count()) * 0.38f + 0);
 
         }
         public static ScrollerP optsc;
-        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame)),HarmonyPostfix]
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.ExitGame)), HarmonyPostfix]
         public static void End_Postfix()
         {
             CustomOptionSelector.selectors = [];
-            CustomOptionsHolder.Options.Do(x => x = []); 
-            RoleOptionsHolder.roleOptions=[];
+            CustomOptionsHolder.Options.Do(x => x = []);
+            RoleOptionsHolder.roleOptions = [];
             RoleOptionTeamsHolder.TeamsHolder = [];
             RoleOptionTeamRoles.RoleOptionsInTeam = [];
 
@@ -263,7 +263,7 @@ namespace TheSpaceRoles
             }
             return;
         }
-        public static CustomOption GetRoleOption(string option,Roles roles,Teams teams)
+        public static CustomOption GetRoleOption(string option, Roles roles, Teams teams)
         {
             foreach (var item in CustomOptionsHolder.Options)
             {
@@ -277,13 +277,13 @@ namespace TheSpaceRoles
             }
             return null;
         }
-        public static void SetRoleOption(string option,Roles roles,Teams teams, int i)
+        public static void SetRoleOption(string option, Roles roles, Teams teams, int i)
         {
             foreach (var item in CustomOptionsHolder.Options)
             {
                 foreach (var item1 in item)
                 {
-                    if (item1.name== option&&item1.team==teams&&item1.role==roles)
+                    if (item1.name == option && item1.team == teams && item1.role == roles)
                     {
                         item1.UpdateSelection(i);
                         return;
@@ -293,7 +293,7 @@ namespace TheSpaceRoles
             return;
         }
         public static int preset = 0;
-        public string GetName() =>this.CustomSetting == CustomSetting.TSRSettings ? Translation.GetString("option." + name) : Translation.GetString("roption." + name);
+        public string GetName() => this.CustomSetting == CustomSetting.TSRSettings ? Translation.GetString("option." + name) : Translation.GetString("roption." + name);
         //public string GetSelectionName() => Translation.GetString("option.selection.sec", [selections[selection].ToString()]);
         public string GetSelectionName()
         {
@@ -351,11 +351,11 @@ namespace TheSpaceRoles
 
             if (this.CustomSetting == CustomSetting.TSRSettings)
             {
-                entry = TSR.Instance.Config.Bind($"Preset{preset}", name, defaultSelection); 
+                entry = TSR.Instance.Config.Bind($"Preset{preset}", name, defaultSelection);
             }
             else
             {
-                entry = TSR.Instance.Config.Bind($"Preset{preset}", team.ToString()+"_"+role.ToString()+"_"+name, defaultSelection);
+                entry = TSR.Instance.Config.Bind($"Preset{preset}", team.ToString() + "_" + role.ToString() + "_" + name, defaultSelection);
             }
 
 
@@ -371,14 +371,14 @@ namespace TheSpaceRoles
             else
             {
 
-                @object.name = team+"_"+role+"_"+name;
+                @object.name = team + "_" + role + "_" + name;
             }
-            @object.transform.SetParent(GetTransformFromSetting(customSetting,parent));
+            @object.transform.SetParent(GetTransformFromSetting(customSetting, parent));
             @object.active = true;
             @object.layer = HudManager.Instance.gameObject.layer;
             @object.transform.localPosition = Vector3.zero;
             @object.transform.localScale = new(0.9f, 0.9f, 0.9f);
-            @object.SetActive(false) ;
+            @object.SetActive(false);
 
 
 
@@ -484,9 +484,9 @@ namespace TheSpaceRoles
         {
             if (CustomOptionsHolder.TSROptions.Any(x => x.name == name)) return;
 
-                var v = new CustomOption(CustomSetting.TSRSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, parent);
-                CustomOptionsHolder.TSROptions.Add(v);
-            
+            var v = new CustomOption(CustomSetting.TSRSettings, name, [Off(), On()], DefaultValue ? On() : Off(), parentId, func, onChange, parent);
+            CustomOptionsHolder.TSROptions.Add(v);
+
         }
         public static void TSRCreate(CustomOptionSelectorSetting parent, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
@@ -504,7 +504,7 @@ namespace TheSpaceRoles
         }
         public static void RoleCreate(Teams teams, Roles roles, string name, Func<string>[] selections, Func<string> selection, string parentId = null, Func<int, bool> func = null, Action onChange = null)
         {
-            if (CustomOptionsHolder.RoleOptions.Any(x => x.name == name&&x.team==teams&&x.role==roles)) return;
+            if (CustomOptionsHolder.RoleOptions.Any(x => x.name == name && x.team == teams && x.role == roles)) return;
 
             var v = new CustomOption(CustomSetting.RoleSettings, name, selections, selection, parentId, func, onChange, role: roles, team: teams);
             CustomOptionsHolder.RoleOptions.Add(v);
@@ -517,7 +517,7 @@ namespace TheSpaceRoles
             entry.Value = ((newSelection % selections.Length) + selections.Length) % selections.Length;
             Logger.Info($"{name}:{selection}");
             ShareOptionSelections();
-            if(this.CustomSetting ==CustomSetting.TSRSettings)
+            if (this.CustomSetting == CustomSetting.TSRSettings)
             {
                 CustomOptionsHolder.AllCheck();
 
@@ -528,7 +528,7 @@ namespace TheSpaceRoles
             }
             onChange?.Invoke();
         }
-        public void Check( float i)
+        public void Check(float i)
         {
             Value_TMP.text = GetSelectionName();
             if (func == null || parentId == null)

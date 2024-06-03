@@ -30,8 +30,8 @@ namespace TheSpaceRoles
             }
 
 
-            if(wincheck)return wincheck;
-            if (DataBase.AlivingKillPlayer()==0)
+            if (wincheck) return wincheck;
+            if (DataBase.AlivingKillPlayer() == 0)
             {
                 return true;
             }
