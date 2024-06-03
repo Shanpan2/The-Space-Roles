@@ -18,7 +18,6 @@ public class TSR : BasePlugin
     public const string version = "0.2.1.1-beta";
     internal static BepInEx.Logging.ManualLogSource Logger;
     public Harmony Harmony = new(Id);
-
     public static TSR Instance;
     public static ConfigEntry<bool> LobbyTimer { get; set; }
     public static ConfigEntry<bool> DebugMode { get; set; }
