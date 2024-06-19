@@ -1,9 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
-using UnityEngine.UIElements.UIR;
-using static TheSpaceRoles.Helper;
-
-namespace TheSpaceRoles
+﻿namespace TheSpaceRoles
 {
     public class Madmate : CustomRole
     {

@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using Hazel;
-using System.Collections.Generic;
 
 namespace TheSpaceRoles
 {
@@ -112,7 +111,7 @@ namespace TheSpaceRoles
         UseAbility,
         CheckedMurderPlayer,//A kill B : A/B/Reasons
         UnCheckedMurderPlayer,//A kill B but not killanimation is only B : A/B/Reasons
-        
+
     }
     public enum DeathReason : int
     {
@@ -123,7 +122,8 @@ namespace TheSpaceRoles
         SheriffSuicide,
         BittenByVampire,
         SerialKillerKill,
-        SerialKillerSuicide
+        SerialKillerSuicide,
+        JackalKill
     }
 
 }

@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace TheSpaceRoles
+﻿namespace TheSpaceRoles
 {
     public class ImpostorTeam : CustomTeam
     {
@@ -19,7 +17,7 @@ namespace TheSpaceRoles
             HasTask = false;
         }
         public override bool WinCheck()
-        { 
+        {
             var v = DataBase.GetPlayerCountInTeam();
             if (v[Teams.Impostor] >= DataBase.GetAsCrewmatePlayerCount() && v[Teams.Jackal] == 0)
             {

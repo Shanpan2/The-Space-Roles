@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
@@ -42,15 +41,15 @@ namespace TheSpaceRoles
             {
 
 
-                int[] players = DataBase.AllPlayerControls().Select(x=>(int)x.PlayerId).ToArray();
+                int[] players = DataBase.AllPlayerControls().Select(x => (int)x.PlayerId).ToArray();
 
-                Dictionary<Teams, int> teams = new() {};
+                Dictionary<Teams, int> teams = new() { };
                 foreach (Teams team in Enum.GetValues(typeof(Teams)))
                 {
                     teams.Add(team, 0);
                 }
 
-                    Dictionary<Teams, Dictionary<Roles, int>> roles = [];
+                Dictionary<Teams, Dictionary<Roles, int>> roles = [];
 
                 foreach (Roles role in Enum.GetValues(typeof(Roles)))
                 {
@@ -202,7 +201,7 @@ namespace TheSpaceRoles
                 var list = DataBase.AllPlayerRoles[playerId].ToList();
                 var p = GetLink.GetCustomRole((Roles)roleId);
                 p.ReSet(playerId, DataBase.AllPlayerTeams[playerId]);
-                p.Team.Role=p;
+                p.Team.Role = p;
                 list.Add(p);
                 DataBase.AllPlayerRoles[playerId] = [.. list];
             }

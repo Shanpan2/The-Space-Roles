@@ -1,14 +1,6 @@
-﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
-using HarmonyLib;
-using Hazel;
-using Il2CppSystem.Dynamic.Utils;
-using JetBrains.Annotations;
-using System.Collections.Generic;
-using Il2CppSystem.Collections.Generic;
+﻿using HarmonyLib;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.ProBuilder;
-using XUnity.Common.MonoMod;
 
 namespace TheSpaceRoles
 {
@@ -17,7 +9,7 @@ namespace TheSpaceRoles
     {
         public static void CustomRpcEndGame(Teams winteams, Teams[] additionalwinteams)
         {
-            GameManager.Instance.RpcEndGame((GameOverReason)winteams + 10,true);
+            GameManager.Instance.RpcEndGame((GameOverReason)winteams + 10, true);
         }
         public static Teams WinnerTeam = Teams.None;
         public static System.Collections.Generic.List<Teams> AdditionalWinnerTeams = [];
@@ -48,7 +40,7 @@ namespace TheSpaceRoles
 
                         }
 
-                        
+
                     }
                     DataBase.buttons.Clear();
                 }
@@ -60,11 +52,11 @@ namespace TheSpaceRoles
 
             }
         }
-        [HarmonyPatch(typeof(AmongUsClient),nameof(AmongUsClient.OnGameEnd))]
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameEnd))]
         private static class OnGameEndPatch
         {
             private static GameOverReason reason = GameOverReason.HumansDisconnect;
-            private static void Prefix( [HarmonyArgument(0)] ref EndGameResult endGameResult)
+            private static void Prefix([HarmonyArgument(0)] ref EndGameResult endGameResult)
             {
                 reason = endGameResult.GameOverReason;
                 if ((int)endGameResult.GameOverReason >= 10) endGameResult.GameOverReason = GameOverReason.ImpostorByKill;
@@ -75,25 +67,27 @@ namespace TheSpaceRoles
                 {
                     var winteam = (Teams)(reason - 10);
                     TempData.winners = new();
-                    var v =TempData.winners;
+                    var v = TempData.winners;
 
-                    Logger.Info("WinTeam:"+winteam.ToString());
+                    Logger.Info("WinTeam:" + winteam.ToString());
                     foreach (var item in DataBase.AllPlayerRoles)
                     {
                         if (item.Value.Any(c => c.Team.Team == winteam))
                         {
 
                             v.Add(new WinningPlayerData(DataBase.AllPlayerControls().First(y => y.PlayerId == item.Key).Data));
-                        }else if(item.Value.Any(c =>c.Team.AdditionalWinCheck(winteam)))
+                        }
+                        else if (item.Value.Any(c => c.Team.AdditionalWinCheck(winteam)))
                         {
                             v.Add(new WinningPlayerData(DataBase.AllPlayerControls().First(y => y.PlayerId == item.Key).Data));
-                            item.Value.DoIf(x=>x.Team.AdditionalWinCheck(winteam)&& !AdditionalWinnerTeams.Contains(x.Team.Team), x=>AdditionalWinnerTeams.Add(x.Team.Team));
+                            item.Value.DoIf(x => x.Team.AdditionalWinCheck(winteam) && !AdditionalWinnerTeams.Contains(x.Team.Team), x => AdditionalWinnerTeams.Add(x.Team.Team));
                         }
                         else
                         {
-                            if (v.ToArray().Any(x => x.PlayerName == DataBase.AllPlayerControls().First(y=>y.PlayerId == item.Key).Data.PlayerName)){
+                            if (v.ToArray().Any(x => x.PlayerName == DataBase.AllPlayerControls().First(y => y.PlayerId == item.Key).Data.PlayerName))
+                            {
                                 v.ToArray().ToList().RemoveAll(x => x.PlayerName == DataBase.AllPlayerControls().First(y => y.PlayerId == item.Key).Data.PlayerName);
-                                
+
                             }
                         }
                     }
@@ -111,7 +105,7 @@ namespace TheSpaceRoles
         {
             private static bool Prefix()
             {
-                if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || AmongUsClient.Instance?.GameState ==null) return false;
+                if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || AmongUsClient.Instance?.GameState == null) return false;
                 /*string str = "";
                 foreach (var item in DataBase.GetPlayerCountInTeam())
                 {

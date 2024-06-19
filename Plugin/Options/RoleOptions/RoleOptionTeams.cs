@@ -21,7 +21,7 @@ namespace TheSpaceRoles
         {
             this.num = num;
             this.teams = team;
-            if((int)team == -1)
+            if ((int)team == -1)
             {
 
                 @object = new GameObject("RoleOptionTeams-Aditional")
@@ -54,7 +54,7 @@ namespace TheSpaceRoles
                 {
                     if ((int)team == -1)
 
-                        renderer.color = Color.white ;
+                        renderer.color = Color.white;
                 }
 
             }
@@ -76,7 +76,8 @@ namespace TheSpaceRoles
             Title_TMP = new GameObject("Title_TMP").AddComponent<TextMeshPro>();
             Title_TMP.transform.SetParent(@object.transform);
             Title_TMP.fontStyle = FontStyles.Bold;
-            if((int)team <0){
+            if ((int)team < 0)
+            {
 
                 Title_TMP.text = Translation.GetString("team.additional.name");
             }
@@ -85,7 +86,7 @@ namespace TheSpaceRoles
 
                 Title_TMP.text = GetLink.GetColoredTeamName(team);
             }
-            Title_TMP.color = GetLink.GetCustomTeam(team)?.Color!=null? GetLink.GetCustomTeam(team).Color : Color.white;
+            Title_TMP.color = GetLink.GetCustomTeam(team)?.Color != null ? GetLink.GetCustomTeam(team).Color : Color.white;
             Title_TMP.fontSize = Title_TMP.fontSizeMax = 2f;
             Title_TMP.fontSizeMin = 1f;
             Title_TMP.alignment = TextAlignmentOptions.Center;
@@ -109,9 +110,10 @@ namespace TheSpaceRoles
             TeamButton.CachedZ = 0.1f;
             TeamButton.Colliders = new[] { @object.GetComponent<BoxCollider2D>() };
             TeamButton.OnClick.AddListener((System.Action)(() =>
-            {   RoleOptionTeamRoles.RoleOptionsInTeam.Do(x => { x.CountNone(); });
-                RoleOptionsDescription.Set(team); 
-                RoleOptionOptions.Check(Teams.None,Roles.None);
+            {
+                RoleOptionTeamRoles.RoleOptionsInTeam.Do(x => { x.CountNone(); });
+                RoleOptionsDescription.Set(team);
+                RoleOptionOptions.Check(Teams.None, Roles.None);
             }));
 
             TeamButton.OnMouseOver.AddListener((System.Action)(() =>
@@ -172,8 +174,8 @@ namespace TheSpaceRoles
             {
                 isEnable = !isEnable;
                 DropDown.sprite = isEnable ? Sprites.GetSpriteFromResources("ui.arrow_drop_down.png", 50) : Sprites.GetSpriteFromResources("ui.arrow_drop_up.png", 50);
-            
-                RoleOptionTeamRoles.RoleOptionsInTeam.Do(x =>  x.CountNone());
+
+                RoleOptionTeamRoles.RoleOptionsInTeam.Do(x => x.CountNone());
                 Logger.Info(isEnable.ToString(), team.ToString());
             }));
 
@@ -192,7 +194,7 @@ namespace TheSpaceRoles
         }
         public void SetPos(float num)
         {
-            if (@object == null)return;
+            if (@object == null) return;
             this.num = num;
             @object.transform.localPosition = new(-2.0f, 2f - 0.36f * num, 0);
         }
@@ -207,7 +209,8 @@ namespace TheSpaceRoles
             {
 
                 color = Helper.ColorEditHSV(color, v: -0.6f);
-            }else if ((int)teams == -1)
+            }
+            else if ((int)teams == -1)
             {
 
             }

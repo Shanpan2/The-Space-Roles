@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
-using UnityEngine.UIElements.UIR;
+﻿using UnityEngine;
 using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
@@ -24,7 +22,7 @@ namespace TheSpaceRoles
 
             }
             VampireBitebutton = new CustomButton(
-                __instance,"VampireKillButton",
+                __instance, "VampireKillButton",
                 ButtonPos.Kill,
                 KeyCode.Q,
                 30,
@@ -32,14 +30,14 @@ namespace TheSpaceRoles
                 __instance.KillButton.graphic.sprite,
                 () =>
                 {
-                BittenPlayerControl =GetPlayerControlFromId(KillButtons.KillButtonSetTarget(2.5f, Color, [Teams.Impostor]));
+                    BittenPlayerControl = GetPlayerControlFromId(KillButtons.KillButtonSetTarget(2.5f, Color, [Teams.Impostor]));
                 },
                 () => VampireBitebutton.Timer = VampireBitebutton.maxTimer,
                 "Kill",
-                true, false, 10f,OnEffectEnd:() => 
+                true, false, 10f, OnEffectEnd: () =>
                 {
-                    UnCheckedMurderPlayer.RpcMurder(PlayerControl.LocalPlayer, BittenPlayerControl, DeathReason.BittenByVampire,false);
-                }) ;
+                    UnCheckedMurderPlayer.RpcMurder(PlayerControl.LocalPlayer, BittenPlayerControl, DeathReason.BittenByVampire, false);
+                });
 
         }
     }

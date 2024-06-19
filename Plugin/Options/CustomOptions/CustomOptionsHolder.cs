@@ -1,16 +1,14 @@
-﻿using Epic.OnlineServices.Lobby;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 using static TheSpaceRoles.CustomOption;
 using static TheSpaceRoles.Translation;
 
 
 namespace TheSpaceRoles
 {
-    
+
     public static class CustomOptionsHolder
     {
         public static List<List<CustomOption>> Options => [
@@ -25,7 +23,7 @@ namespace TheSpaceRoles
             foreach (CustomOptionSelectorSetting value in Enum.GetValues(typeof(CustomOptionSelectorSetting)))
             {
 
-                if (TSROptions== null || TSROptions.Count == 0) continue;
+                if (TSROptions == null || TSROptions.Count == 0) continue;
                 int b = 0;
                 Logger.Info(TSROptions.Count.ToString());
 
@@ -82,10 +80,10 @@ namespace TheSpaceRoles
             return [() => "0", () => "1", () => "2", () => "3", () => "4", () => "5", () => "6", () => "7", () => "8", () => "9", () => "10", () => "11", () => "12", () => "13", () => "14", () => "15"];
 
         }
-        public static void CreateRoleOptions(Teams team,Roles role)
+        public static void CreateRoleOptions(Teams team, Roles role)
         {
 
-            RoleCreate(team, role, "spawncount", GetCountList(), () => "0", onChange:()=> RoleOptionTeamRoles.RoleOptionsInTeam.ToArray().Do(x=>x.CheckCount()));
+            RoleCreate(team, role, "spawncount", GetCountList(), () => "0", onChange: () => RoleOptionTeamRoles.RoleOptionsInTeam.ToArray().Do(x => x.CheckCount()));
             RoleCreate(team, role, "spawnrate", GetRateList(), () => "0%"); ;
         }
         public static void CreateCustomOptions()
@@ -113,7 +111,7 @@ namespace TheSpaceRoles
 
             foreach (Roles role in Enum.GetValues(typeof(Roles)))
             {
-                if (GetLink.CustomRoleLink.Any(x=>x.Role==role))
+                if (GetLink.CustomRoleLink.Any(x => x.Role == role))
                 {
                     foreach (var team in GetLink.GetCustomRole(role).teamsSupported)
                     {

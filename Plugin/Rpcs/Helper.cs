@@ -1,7 +1,6 @@
 ﻿using BepInEx.Configuration;
 using Il2CppInterop.Runtime;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,7 +42,7 @@ namespace TheSpaceRoles
         }
         public static List<Roles> GetRoles(this PlayerControl p)
         {
-            return DataBase.AllPlayerRoles[p.PlayerId].Select(x=>x.Role).ToList();
+            return DataBase.AllPlayerRoles[p.PlayerId].Select(x => x.Role).ToList();
         }
         public static CustomRole GetCustomRole(this PlayerControl p)
         {
@@ -53,7 +52,7 @@ namespace TheSpaceRoles
         {
             return DataBase.AllPlayerRoles[p.PlayerId].ToList();
         }
-        public static bool IsRole(this PlayerControl p,Roles role)
+        public static bool IsRole(this PlayerControl p, Roles role)
         {
             return DataBase.AllPlayerRoles[p.PlayerId].Any(x => x.Role == role);
         }
@@ -61,11 +60,11 @@ namespace TheSpaceRoles
         {
             return DataBase.AllPlayerRoles[p.PlayerId].Any(x => x.Team.Team == team);
         }
-        public static bool InArea(Vector3 Position,Vector3 startPos,Vector3 endPos)
+        public static bool InArea(Vector3 Position, Vector3 startPos, Vector3 endPos)
         {
             if (startPos.x > endPos.x)
             {
-                if(startPos.x > Position.x&& Position.x > endPos.x)
+                if (startPos.x > Position.x && Position.x > endPos.x)
                 {
 
                 }

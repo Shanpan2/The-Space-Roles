@@ -1,9 +1,6 @@
-﻿using HarmonyLib;
-using System;
-using System.Linq;
+﻿using System;
 using TMPro;
 using UnityEngine;
-using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 
 namespace TheSpaceRoles
 {
@@ -104,9 +101,9 @@ namespace TheSpaceRoles
         }
         public static void Set(Teams teams)
         {
-            if((int)teams == -1)
+            if ((int)teams == -1)
             {
-                SetDescription(Helper.ColoredText(Color.white,Translation.GetString("team.additional.name")), Helper.ColoredText(Color.white, Translation.GetString("team.additional.intro")), Helper.ColoredText(Color.white, Translation.GetString("team.additional.description")));
+                SetDescription(Helper.ColoredText(Color.white, Translation.GetString("team.additional.name")), Helper.ColoredText(Color.white, Translation.GetString("team.additional.intro")), Helper.ColoredText(Color.white, Translation.GetString("team.additional.description")));
             }
             else
             {

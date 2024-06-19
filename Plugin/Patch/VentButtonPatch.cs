@@ -1,13 +1,8 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
-using static TheSpaceRoles.Helper;
 
 namespace TheSpaceRoles
 {
@@ -17,7 +12,7 @@ namespace TheSpaceRoles
         static void Postfix(Vent __instance)
         {
             // Vent outline set role color
-            var color = PlayerControl.LocalPlayer.GetCustomRoles().First(x=>x.CanUseVent==true).Color;
+            var color = PlayerControl.LocalPlayer.GetCustomRoles().First(x => x.CanUseVent == true).Color;
             string[] outlines = new[] { "_OutlineColor", "_AddColor" };
             foreach (var name in outlines)
                 __instance.myRend.material.SetColor(name, color);
@@ -31,7 +26,7 @@ namespace TheSpaceRoles
             PlayerControl pc = pinf.Object;
             couldUse = DataBase.AllPlayerRoles[pc.PlayerId].Any(x => x.CanUseVent == true);
             Vent.currentVent = VentPatch.SetTargetVent();
-            canUse = (couldUse && !pinf.IsDead&& Vent.currentVent)||pc.inVent;
+            canUse = (couldUse && !pinf.IsDead && Vent.currentVent) || pc.inVent;
             //Vent.currentVent = VentPatch.SetTargetVent();
             return false;
         }
@@ -66,7 +61,7 @@ namespace TheSpaceRoles
         {
             Vent result = null;
             float num = GameOptionsData.KillDistances[Mathf.Clamp(GameManager.Instance.LogicOptions.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)];
-            if (ShipStatus.Instance==null) return result;
+            if (ShipStatus.Instance == null) return result;
             if (targetingPlayer == null) targetingPlayer = PlayerControl.LocalPlayer;
             if (targetingPlayer.Data.IsDead || targetingPlayer.inVent) return result;
 
@@ -97,7 +92,7 @@ namespace TheSpaceRoles
                     }
                 }
             }
-            if(result==null)
+            if (result == null)
                 Logger.Info("null");
             return result;
         }

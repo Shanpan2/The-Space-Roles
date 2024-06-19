@@ -78,7 +78,7 @@ namespace TheSpaceRoles
         Pursuer,//追跡者?
         Thief//泥棒?
     }
-    public enum CustomGameOverReason:int
+    public enum CustomGameOverReason : int
     {
         GhostTown,
         Jester,
@@ -91,7 +91,7 @@ namespace TheSpaceRoles
     {
         public static List<CustomRole> CustomRoleLink =>
         [
-            
+
             new Crewmate(),
             new Impostor(),
             new Sheriff(),
@@ -99,6 +99,8 @@ namespace TheSpaceRoles
             new Vampire(),
             new SerialKiller(),
             new Madmate(),
+            new Jackal(),
+            new Guesser(),
         ];
 
         public static List<CustomRole> CustomRoleNormalLink =>
@@ -106,6 +108,7 @@ namespace TheSpaceRoles
             new Crewmate(),
             new Impostor(),
             new Madmate(),
+            new Jackal(),
         ];
 
         public static List<CustomTeam> CustomTeamLink =>
@@ -115,7 +118,7 @@ namespace TheSpaceRoles
             new JackalTeam(),
             new JesterTeam(),
             new MadmateTeam(),
-           
+
         ];
 
 
@@ -162,7 +165,7 @@ namespace TheSpaceRoles
             {
                 return CustomTeamLink.First(x => x.Team == team).ColoredTeamName;
             }
-            if((int)team == -1)
+            if ((int)team == -1)
             {
                 return ColoredText(Color.magenta, Translation.GetString("team.additional.name"));
             }

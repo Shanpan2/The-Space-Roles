@@ -48,9 +48,9 @@ namespace TheSpaceRoles
             ActionBool(FastDestroyableSingleton<HudManager>.Instance.ImpostorVentButton, (bool)CanUseVent);
             ActionBool(FastDestroyableSingleton<HudManager>.Instance.KillButton, (bool)HasKillButton);
         }
-        protected void ActionBool(ActionButton button,bool show_hide)
+        protected void ActionBool(ActionButton button, bool show_hide)
         {
-            if(show_hide)
+            if (show_hide || DataBase.AllPlayerRoles[PlayerId].Any(x => x.HasKillButton))
             {
                 //button.enabled = true;
                 //button.gameObject.SetActive(true);
@@ -60,6 +60,7 @@ namespace TheSpaceRoles
             }
             else
             {
+                button.canInteract = false;
                 button.enabled = false;
                 button.Hide();
             }
@@ -83,7 +84,11 @@ namespace TheSpaceRoles
         public bool Exiled = false;
 
         public virtual void HudManagerStart(HudManager hudManager) { }
-        public virtual void MeetingEnd() { }
+
+        public virtual void MeetingUpdate(MeetingHud meeting) { }
+        public virtual void BeforeMeetingStart(MeetingHud meeting) { }
+        public virtual void MeetingStart(MeetingHud meeting) { }
+        public virtual void MeetingEnd(MeetingHud meeting) { }
         public virtual void Killed() { }
         public virtual void WasKilled() { }
         public virtual void Die() { }
@@ -133,22 +138,90 @@ namespace TheSpaceRoles
         /// プレイヤーid入れて初期化
         /// </summary>
         /// <param name="playerId">PlayerControl pc.playerId</param>
-        public void ReSet(int playerId,Teams teams)
+        public void ReSet(int playerId, Teams teams)
         {
             PlayerId = playerId;
-            PlayerControl = DataBase.AllPlayerControls().First(x=>x.PlayerId==playerId);
+            PlayerControl = DataBase.AllPlayerControls().First(x => x.PlayerId == playerId);
             PlayerName = DataBase.AllPlayerControls().First(x => x.PlayerId == playerId).name.Replace("<color=.*>", string.Empty).Replace("</color>", string.Empty); ;
             Team = GetLink.GetCustomTeam(teams);
             Init();
         }
+        [HarmonyPatch(typeof(MeetingHud))]
+        private static class MeetingHudVote
+        {
+            [HarmonyPatch(nameof(MeetingHud.CheckForEndVoting)), HarmonyPostfix]
+            private static void CheckForVoting(MeetingHud __instance)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.MeetingEnd(__instance));
+
+            }
+            [HarmonyPatch(nameof(MeetingHud.Start)), HarmonyPostfix]
+            private static void Start(MeetingHud __instance)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.MeetingStart(__instance));
+
+            }
+            [HarmonyPatch(nameof(MeetingHud.Update)), HarmonyPostfix]
+            private static void Update(MeetingHud __instance)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.MeetingUpdate(__instance));
+
+            }
+            [HarmonyPatch(nameof(MeetingHud.CoStartCutscene)), HarmonyPostfix]
+            private static void CustScene(MeetingHud __instance)
+            {
+                DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.BeforeMeetingStart(__instance));
+
+            }
+        }
+        [HarmonyPatch(typeof(ActionButton), nameof(ActionButton.SetEnabled))]
+        private static class MeetingEndPlayerStart
+        {
+            static void Postfix(ActionButton __instance)
+            {
+                if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
+                {
+
+                    if (DataBase.AllPlayerRoles != null && DataBase.AllPlayerRoles.ContainsKey(PlayerControl.LocalPlayer.PlayerId))
+                    {
+                        DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.ResetStart());
+                    }
+                }
+
+            }
+        }
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Exiled))]
+        private static class PlayerControlExiledPatch
+        {
+            static void Postfix(PlayerControl __instance)
+            {
+
+                DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Team.WasExiled());
+                DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Exiled = true);
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
+        private static class PlayerControlDiePatch
+        {
+            static void Postfix(PlayerControl __instance)
+            {
+
+                DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Die());
+                DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Dead = true);
+                DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => Logger.Info(x.PlayerId.ToString()));
+                Logger.Info(__instance.PlayerId + "_" + __instance.Data.PlayerName);
+            }
+        }
     }
+
     [HarmonyPatch(typeof(HudManager))]
     public static class HudManagerGame
     {
         public static bool OnGameStarted = false;
         public static bool IsGameStarting = false;
         [HarmonyPatch(nameof(HudManager.OnGameStart)), HarmonyPostfix]
-        public static void ButtonCreate(HudManager __instance)
+        private static void ButtonCreate(HudManager __instance)
         {
 
             if (!OnGameStarted) return;
@@ -165,15 +238,13 @@ namespace TheSpaceRoles
 
                 DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.HudManagerStart(__instance));
                 DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.ResetStart());
+                DataBase.ButtonsPositionSetter();
             }
-
-
-
         }
         public static float ButtonCooldown;
         public static bool ButtonCooldownEnabled;
         [HarmonyPatch(nameof(HudManager.Update)), HarmonyPostfix]
-        public static void Update()
+        private static void Update()
         {
             if (!IsGameStarting) return;
             if (DataBase.AllPlayerRoles.ContainsKey(PlayerControl.LocalPlayer.PlayerId))
@@ -185,53 +256,6 @@ namespace TheSpaceRoles
             }
         }
 
-    }
-    [HarmonyPatch(typeof(MeetingHud),nameof(MeetingHud.CheckForEndVoting))]
-    public static class MeetingHudVote
-    {
-        public static void Postfix()
-        {
-            DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.MeetingEnd());
-
-        }
-    }
-    [HarmonyPatch(typeof(ActionButton),nameof(ActionButton.SetEnabled))]
-    public static class MeetingEndPlayerStart
-    {
-        public static void Postfix(ActionButton __instance)
-        {
-            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
-            {
-
-                if (DataBase.AllPlayerRoles != null && DataBase.AllPlayerRoles.ContainsKey(PlayerControl.LocalPlayer.PlayerId))
-                {
-                    DataBase.AllPlayerRoles[PlayerControl.LocalPlayer.PlayerId].Do(x => x.ResetStart());
-                }
-            }
-
-        }
-    }
-    [HarmonyPatch(typeof(PlayerControl),nameof(PlayerControl.Exiled))]
-    public static class PlayerControlExiledPatch
-    {
-        public static void Postfix(PlayerControl __instance) {
-
-            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Team.WasExiled());
-            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Exiled=true);
-        }
-    }
-
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
-    public static class PlayerControlDiePatch
-    {
-        public static void Postfix(PlayerControl __instance)
-        {
-
-            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Die());
-            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => x.Dead=true);
-            DataBase.AllPlayerRoles[__instance.PlayerId].Do(x => Logger.Info(x.PlayerId.ToString()));
-            Logger.Info(__instance.PlayerId +"_"+__instance.Data.PlayerName);
-        }
     }
 
 }

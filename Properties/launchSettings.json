@@ -14,6 +14,10 @@
     "TSR rrrrr": {
       "commandName": "Executable",
       "executablePath": "$(AmongUsStartBat)\\start1.bat"
+    },
+    "プロファイル 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\taiti\\Desktop\\AmongUsMods\\startBat\\new4.bat"
     }
   }
 }
